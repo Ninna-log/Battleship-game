@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+</head>
+<body>
+<h1>Salvo!</h1>
+
+
+<div id="app">
+    <ul>
+        <li v-for='game in games'>
+            Date: {{game.date}}
+            <ol>
+                <li v-for='gamePlayer in game.gamePlayers'>
+
+                    Email: {{gamePlayer.email}}
+                </li>
+            </ol>
+        </li>
+    </ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="games.js"></script>
+</body>
+</html>
