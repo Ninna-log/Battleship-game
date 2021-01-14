@@ -12,13 +12,13 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-public class Ship {
+public class Salvo {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
-    private String type;
+    private int turn;
 
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="gamePlayer_id")
@@ -27,14 +27,10 @@ public class Ship {
     @ElementCollection
     private List<String> locations;
 
-    public Ship() { }
+    public Salvo() { }
 
-    public List<String> getLocations() {
-        return locations;
-    }
-
-    public Ship(String type, List<String> locations){
-        this.type = type;
+    public Salvo(int turn, List<String> locations){
+        this.turn = turn;
         this.locations = locations;
     }
 
@@ -46,15 +42,27 @@ public class Ship {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
+    public int getTurn() {
+        return turn;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTurn(int turn) {
+        this.turn = turn;
+    }
+
+    public GamePlayer getGamePlayer() {
+        return gamePlayer;
     }
 
     public void setGamePlayer(GamePlayer gamePlayer) {
         this.gamePlayer = gamePlayer;
+    }
+
+    public List<String> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<String> locations) {
+        this.locations = locations;
     }
 }

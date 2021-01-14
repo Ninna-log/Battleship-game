@@ -3,30 +3,50 @@
 <head>
     <link rel="stylesheet" href="/web/game.css">
 </head>
-<body>
-<h1>Ship locations!</h1>
+      <div id="table">
+            <div>
+                <h1>{{ viewer != null ? viewer.email : '' }} vs {{ enemy != null ? enemy.email : ''}}</h1>
+            </div>
+                <div>
+                    <div class="table">
+                        <h1>Ships locations</h1>
+                          <table border="1">
+                            <thead>
+                                <tr>
+                                    <td></td>
+                                    <td v-for="column in columns">{{column}}</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="row in rows">
+                                    <td>{{row}}</td>
+                                    <td v-for="column in columns" v-bind:id="row + column"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-<div id="table">
-    <h2 v-if="gameView != null">{{gameView.gamePlayers[0].email}} vs. {{gameView.gamePlayers[1].email}}</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <td></td>
-                <td v-for="column in columns">{{column}}</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="row in rows">
-                <td>{{row}}</td>
-                <td v-for="column in columns" v-bind:id="row + column"></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
+                    <div class="table">
+                        <h1>Salvoes locations</h1>
+                        <table border="1">
+                            <thead>
+                                <tr>
+                                    <td></td>
+                                    <td v-for="column in columns">{{column}}</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="row in rows">
+                                    <td>{{row}}</td>
+                                    <td v-for="column in columns" v-bind:id="salvo + row + column"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>q
 
-
-<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
-<script src="game.js"></script>
-</body>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <script src="game.js"></script>
+    </body>
 </html>

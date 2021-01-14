@@ -14,8 +14,14 @@ public class SalvoController {
     @Autowired // Dependency Injection with Spring
     private GameRepository gameRepository;
 
+    @Autowired // Dependency Injection with Spring
+    private SalvoRepository salvoRepository;
+
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
+
+    @Autowired
+    private ScoreRepository scoreRepository;
 
     @RequestMapping("/games")
     public List<Object> getGames() {
@@ -33,7 +39,7 @@ public class SalvoController {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
         dto.put("id", game.getId());
         dto.put("date", game.getDate());
-        dto.put("gamePlayers", game.getPlayers().stream().map(player -> makePlayerDTO(player)).collect(Collectors.toList()));
+        dto.put("gamePlayers", game.getGamePlayers().stream().map(gamePlayer -> makeGamePlayerDTO(gamePlayer)).collect(Collectors.toList()));
         return dto;
     }
 
@@ -44,10 +50,26 @@ public class SalvoController {
         return dto;
     }
 
+    private Object makeGamePlayerDTO(GamePlayer gamePlayer) {
+        Map<String, Object> dto = new LinkedHashMap<String, Object>();
+        dto.put("id", gamePlayer.getId());
+        dto.put("player", makePlayerDTO(gamePlayer.getPlayer()));
+        dto.put("score", gamePlayer.getScore() != null ? gamePlayer.getScore().getScore():null);
+        return dto;
+    }
+
     private Map<String, Object> makeShipDTO(Ship ship) {  // DTO = Data Transfer Object
         Map<String, Object> dto = new LinkedHashMap<String, Object>(); //
         dto.put("type", ship.getType());
-        dto.put("location", ship.locations);
+        dto.put("location", ship.getLocations());
+        return dto;
+    }
+
+    private Map<String, Object> makeSalvoDTO(Salvo salvo) {  // DTO = Data Transfer Object
+        Map<String, Object> dto = new LinkedHashMap<String, Object>(); //
+        dto.put("turn", salvo.getTurn());
+        dto.put("player", salvo.getGamePlayer().getPlayer().getId());
+        dto.put("location", salvo.getLocations());
         return dto;
     }
 
@@ -55,8 +77,9 @@ public class SalvoController {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
         dto.put("id", gamePlayer.getId());
         dto.put("date", gamePlayer.getDate());
-        dto.put("gamePlayers", gamePlayer.getGame().getPlayers().stream().map(player -> makePlayerDTO(player)).collect(Collectors.toList()));
+        dto.put("gamePlayers", gamePlayer.getGame().getGamePlayers().stream().map(gamePlayer1 -> makeGamePlayerDTO(gamePlayer1)).collect(Collectors.toList()));
         dto.put("ships", gamePlayer.getShips().stream().map(ship -> makeShipDTO(ship)).collect(Collectors.toList()));
+        dto.put("salvoes", gamePlayer.getGame().getGamePlayers().stream().flatMap(gamePlayer1 -> gamePlayer1.getSalvos().stream()).map(salvo -> makeSalvoDTO(salvo)).collect(Collectors.toList()));
         return dto;
     }
 }

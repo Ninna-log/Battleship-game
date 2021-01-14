@@ -1,12 +1,9 @@
 package com.mindhub.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 @Entity
@@ -30,30 +27,36 @@ public class GamePlayer {
     @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER, cascade = CascadeType.ALL) // relation que hay con Ship a través de la propiedad "gamePlayer"
     private Set<Ship> ships = new HashSet<>();
 
+    @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER, cascade = CascadeType.ALL) // relation que hay con Salvo a través de la propiedad "gamePlayer"
+    private Set<Salvo> salvos = new HashSet<>();
+
     public GamePlayer() { } // empty constructor
 
     public GamePlayer(Player player, Game game, LocalDateTime date) {
         this.player = player;    // Non-empty constructor which will be receiving when the GamePlayer object is created
-        this.game = game;          // a Player, a Game, a Date and a Ship
+        this.game = game;          // a Player, a Game, a Date, a Ship and a score
         this.date = date;
+    }
+
+    public Score getScore() {
+        return player.getScore(game);
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public Set<Ship> getShips() {
         return ships;
     }
 
-    public void setShips(Set<Ship> ships) {
-        this.ships = ships;
+    public Set<Salvo> getSalvos() {
+        return salvos;
     }
 
     public long getId() { // An ID is received
 
         return id;
-    }
-
-    public void setId(long id) { // An ID is modified
-
-        this.id = id;
     }
 
     public Player getPlayer() { // A Player is received
@@ -91,4 +94,8 @@ public class GamePlayer {
         ships.add(ship);
     }
 
+    public void addSalvo(Salvo salvo) {
+        salvo.setGamePlayer(this);
+        salvos.add(salvo);
+    }
 }

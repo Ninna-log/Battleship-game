@@ -21,6 +21,9 @@ public class Game {
     @OneToMany(mappedBy="game", fetch=FetchType.EAGER) // relation of one(Game) to many(gamePlayers)
     Set<GamePlayer> gamePlayers = new HashSet<>();
 
+    @OneToMany(mappedBy="game", fetch=FetchType.EAGER)
+    Set<Score> scores = new HashSet<>();
+
     public List<Player> getPlayers() {
 
         return gamePlayers.stream().map(game -> game.getPlayer()).collect(toList());
@@ -30,9 +33,29 @@ public class Game {
     public Game() { }
     //empty constructor used by hibernate
 
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public void setGamePlayers(Set<GamePlayer> gamePlayers) {
+        this.gamePlayers = gamePlayers;
+    }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
+    }
+
     public Game(LocalDateTime date) {  // A date is received
 
         this.date = date;
+    }
+
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
     }
 
     public long getId() { // An ID is received
@@ -48,11 +71,6 @@ public class Game {
     public LocalDateTime getDate() {
 
         return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-
-        this.date = date;
     }
 
     public void addGamePlayer(GamePlayer gamePlayer) {

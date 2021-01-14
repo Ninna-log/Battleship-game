@@ -19,7 +19,10 @@ public class Player {
     private String userName; // private variable only accessible by asking with a getter
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER) // relation of one(Player) to many(gamePlayers)
-    Set<GamePlayer> gamePlayers = new HashSet<>();
+    private Set<GamePlayer> gamePlayers = new HashSet<>();
+
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    private Set<Score> scores = new HashSet<>();
 
     @JsonIgnore
     public List<Game> getGame() {
@@ -28,12 +31,24 @@ public class Player {
         //method to get a list of which games are associated with player class
     }
 
+    public Score getScore(Game game) {
+        return scores.stream().filter(score -> score.getGame().equals(game)).findFirst().orElse(null);
+    }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
     public Player() { }
     //empty constructor used by hibernate
 
     public Player(String userName) {
 
         this.userName = userName;
+    }
+
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
     }
 
     public String getUserName() {
@@ -75,5 +90,10 @@ public class Player {
 
         return Objects.hash(id, userName);
     }
+
+    public GamePlayer getGamePlayer(GamePlayer gamePlayer) {
+        return gamePlayer;
+    }
+
 }
 

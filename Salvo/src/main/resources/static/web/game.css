@@ -1,7 +1,45 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    align-items: start;
+    justify-content: center;
+}
+
 .shipColor{
     background-color: green;
 }
-#table table{
- width: 500px;
- height: 500px;
+
+.viewerSalvoColor {
+    background-color: blue;
 }
+
+.enemySalvoColor {
+    background-color: yellow;
+}
+
+.hits {
+    background-color: red;
+}
+
+#table div {
+    display: flex;
+    align-items: start;
+    justify-content: center;
+}
+
+#table .table {
+    display: flex;
+    flex-direction: column;
+
+}
+
+#table .table table {
+    width: 500px;
+    height: 500px;
+}
+
+
+
