@@ -2,6 +2,7 @@ package com.mindhub.salvo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.beans.factory.annotation.Autowired;
 import static java.util.stream.Collectors.toList;
 import javax.persistence.*;
 import java.util.HashSet;
@@ -18,11 +19,19 @@ public class Player {
 
     private String userName; // private variable only accessible by asking with a getter
 
+    @Autowired
+    private String password;
+
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER) // relation of one(Player) to many(gamePlayers)
     private Set<GamePlayer> gamePlayers = new HashSet<>();
 
     @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     private Set<Score> scores = new HashSet<>();
+
+    public Player(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
 
     @JsonIgnore
     public List<Game> getGame() {
@@ -43,12 +52,19 @@ public class Player {
     //empty constructor used by hibernate
 
     public Player(String userName) {
-
         this.userName = userName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Set<GamePlayer> getGamePlayers() {
         return gamePlayers;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getUserName() {

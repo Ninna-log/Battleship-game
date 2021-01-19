@@ -1,8 +1,10 @@
 package com.mindhub.salvo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.context.annotation.Bean;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,6 +13,9 @@ import java.util.List;
 
 @SpringBootApplication
 public class SalvoApplication {
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SalvoApplication.class, args);
@@ -22,10 +27,10 @@ public class SalvoApplication {
 									  ScoreRepository scoreRepository) {
 		return (args) -> {
 
-			Player player1 = new Player("j.bauer@ctu.gov");
-			Player player2 = new Player("c.obrian@ctu.gov");
-			Player player3 = new Player("kim_bauer@gmail.com");
-			Player player4 = new Player("t.almeida@ctu.gov");
+			Player player1 = new Player("j.bauer@ctu.gov", passwordEncoder.encode("24"));
+			Player player2 = new Player("c.obrian@ctu.gov", passwordEncoder.encode("42"));
+			Player player3 = new Player("kim_bauer@gmail.com", passwordEncoder.encode("kb"));
+			Player player4 = new Player("t.almeida@ctu.gov", passwordEncoder.encode("mole"));
 			// saving a couple of players
 			playerRepository.save(player1);
             playerRepository.save(player2);
