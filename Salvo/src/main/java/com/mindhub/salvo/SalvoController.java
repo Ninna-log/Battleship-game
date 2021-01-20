@@ -6,12 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,18 +49,22 @@ public class SalvoController {
 
     }
 
-    @RequestMapping(value = "/games", method = RequestMethod.GET)
-    private Object currentPlayer(Authentication authentication) {
-        Map<String, Object> dto = new LinkedHashMap<String, Object>();
-        dto.put("player", makePlayerDTO(playerRepository.findByUserName(authentication.getName())));
-        dto.put("games", getGames());
-        return dto;
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
 
     @RequestMapping("/games")
-    public List<Object> getGames() {
-
-      return gameRepository.findAll().stream().map(game -> makeGameDTO(game)).collect(Collectors.toList());
+    private Map<String,Object> getGames(Authentication authentication) {
+        Map<String, Object> dto = new LinkedHashMap<String, Object>();
+        if(isGuest(authentication)){
+            dto.put("player", null);
+        }
+        else{
+            Player player = playerRepository.findByUserName(authentication.getName());
+            dto.put("player", makePlayerDTO(player));
+        }
+        dto.put("games", gameRepository.findAll().stream().map(game -> makeGameDTO(game)).collect(Collectors.toList()));
+        return dto;
    }
 
     @RequestMapping("/game_view/{gamePlayerId}")
@@ -93,7 +93,7 @@ public class SalvoController {
     private Map<String, Object> makePlayerDTO(Player player) {  // DTO = Data Transfer Object
         Map<String, Object> dto = new LinkedHashMap<String, Object>(); //
         dto.put("id", player.getId());
-        dto.put("name", player.getUserName());
+        dto.put("email", player.getUserName());
         return dto;
     }
 

@@ -95,7 +95,7 @@ fetch('/api/games')
       return res.json();
     })
     .then(function(json){
-      appVue.games = json;
+      appVue.games = json.games;
       appVue.playersList();
       appVue.totalScores();
       appVue.wonScores();
