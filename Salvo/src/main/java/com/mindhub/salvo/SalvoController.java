@@ -33,24 +33,20 @@ public class SalvoController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @RequestMapping(path = "/api/players", method = RequestMethod.POST)
-    public ResponseEntity<Object> register(@RequestParam String userName, @RequestParam String password) {
+    @PostMapping("/players")
+    public ResponseEntity<Object> register(@RequestParam String username, @RequestParam String password) {
 
-        if (userName.isEmpty() || password.isEmpty()) {
+        if (username.isEmpty() || password.isEmpty()) {
             return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
         }
 
-        if (playerRepository.findByUserName(userName) != null) {
+        if (playerRepository.findByUserName(username) != null) {
             return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
         }
 
-        playerRepository.save(new Player(userName, passwordEncoder.encode(password)));
+        playerRepository.save(new Player(username, passwordEncoder.encode(password)));
         return new ResponseEntity<>(HttpStatus.CREATED);
 
-    }
-
-    private boolean isGuest(Authentication authentication) {
-        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
 
     @RequestMapping("/games")
@@ -66,6 +62,10 @@ public class SalvoController {
         dto.put("games", gameRepository.findAll().stream().map(game -> makeGameDTO(game)).collect(Collectors.toList()));
         return dto;
    }
+
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+    }
 
     @RequestMapping("/game_view/{gamePlayerId}")
     public Map<String,Object> getGameView(@PathVariable Long gamePlayerId) {

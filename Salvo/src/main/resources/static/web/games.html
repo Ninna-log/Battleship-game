@@ -1,11 +1,24 @@
 <!DOCTYPE HTML>
-<html xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
+      xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <link rel="stylesheet" href="/web/games.css">
 </head>
 <body>
 <div id="app">
 <div>
+    <div>
+        <form v-show="authentication == null">
+            <label>Username: <input type="text" v-model:value="username"></label>
+            <label>Password: <input type="password" v-model:value="password"></label>
+            <button type="button" v-on:click="login">SignIn</button>
+            <button v-show="authentication == null" type="button" v-on:click="register">Register</button>
+        </form>
+        <div v-if="authentication != null">
+             <h2>{{authentication.email}}</h2>
+        </div>
+        <button v-show="authentication != null" type="button" v-on:click="logout">SignOut</button>
+    </div>
     <h1>Salvo!</h1>
     <ul>
         <li v-for='game in games'>

@@ -44,8 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll();
 
         http.formLogin()
-                .usernameParameter("name")
-                .passwordParameter("pwd")
+                .usernameParameter("username")
+                .passwordParameter("password")
                 .loginPage("/api/login");
 
         http.logout().logoutUrl("/api/logout");
