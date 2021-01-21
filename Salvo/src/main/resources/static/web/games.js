@@ -1,7 +1,6 @@
 var appVue = new Vue({
     el: '#app',
     data: {
-        data: {},
         games: {},
         authentication: null,
         player: [],
@@ -21,14 +20,16 @@ var appVue = new Vue({
                 $.post("/api/login", { username: appVue.username, password: appVue.password })
                     .done(function () {
                         alert("You're successfully logged in!")
-                        location.reload()
                     })
                     .fail(function () {
                         alert("Incorrect data")
-                        location.reload()
+                        appVue.username = ""
+                        appVue.password = ""
                     })
             } else {
                 alert("Missing data")
+                appVue.username = ""
+                appVue.password = ""
             }
         },
         logout: function () {
@@ -40,15 +41,24 @@ var appVue = new Vue({
         },
         register: function () {
             if (appVue.username.length != 0 && appVue.password.length != 0) {
+                var emailValidation = /^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+                console.log(emailValidation.test(appVue.username))
+                if(emailValidation.test(appVue.username) != true){
+                    alert("Please enter a valid email")
+                    appVue.username = ""
+                    appVue.password = ""
+                }else{
                 $.post("/api/players", { username: appVue.username, password: appVue.password })
                     .done(function () {
                         alert("Your user was created!")
-                        location.reload()
+                        appVue.login(appVue.username, appVue.password)
                     })
                     .fail(function () {
-                        alert("Incorrect data")
-                        location.reload()
+                        alert("User already in use")
+                        appVue.username = ""
+                        appVue.password = ""
                     })
+                }
             } else {
                 alert("Missing data")
             }
