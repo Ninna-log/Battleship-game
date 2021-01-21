@@ -27,6 +27,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     // Password is been encrypted before storing it
     @Bean
     public PasswordEncoder passwordEncoder() {
+
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 

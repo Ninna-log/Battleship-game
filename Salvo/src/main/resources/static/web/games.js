@@ -18,31 +18,19 @@ var appVue = new Vue({
     methods: {
         login: function () {
             if (appVue.username.length != 0 && appVue.password.length != 0) {
-                $.post("/api/login", {
-                    username: appVue.username, password: appVue.password
-                })
-                fetch('/api/login')
-                    .then((res) => {
-                        return res.json();
-                     })
-                    .then(json => {
-                        appVue.data = json;
-                        if (appVue.data.status === 404) {
-                            alert("Incorrect password")
-                            console.log(appVue.data.status);
-
-                        }
-                        else {
-                            alert("You're successfully logged in")
-                            console.log(appVue.data.status);
-                        }
+                $.post("/api/login", { username: appVue.username, password: appVue.password })
+                    .done(function () {
+                        alert("You're successfully logged in!")
+                        location.reload()
                     })
-
+                    .fail(function () {
+                        alert("Incorrect data")
+                        location.reload()
+                    })
             } else {
                 alert("Missing data")
             }
         },
-
         logout: function () {
             $.post("/api/logout")
                 .done(function () {
@@ -51,15 +39,19 @@ var appVue = new Vue({
                 })
         },
         register: function () {
-            if (appVue.username.length == 0 || appVue.password.length == 0) {
+            if (appVue.username.length != 0 && appVue.password.length != 0) {
+                $.post("/api/players", { username: appVue.username, password: appVue.password })
+                    .done(function () {
+                        alert("Your user was created!")
+                        location.reload()
+                    })
+                    .fail(function () {
+                        alert("Incorrect data")
+                        location.reload()
+                    })
+            } else {
                 alert("Missing data")
-            } else if (appVue.username.length != 0 && appVue.password.length != 0) {
-                playerRepository.findByUserName(appVue.username)
-                alert("Email already in use")
             }
-
-            playerRepository.save(new Player(username, passwordEncoder.encode(password)));
-            alert("User successfully created")
         },
         playersList: function () {
             // pushing all the players to appVue.player
