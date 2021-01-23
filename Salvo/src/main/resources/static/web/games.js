@@ -20,16 +20,13 @@ var appVue = new Vue({
                 $.post("/api/login", { username: appVue.username, password: appVue.password })
                     .done(function () {
                         alert("You're successfully logged in!")
+                        location.reload()
                     })
                     .fail(function () {
                         alert("Incorrect data")
-                        appVue.username = ""
-                        appVue.password = ""
                     })
             } else {
                 alert("Missing data")
-                appVue.username = ""
-                appVue.password = ""
             }
         },
         logout: function () {
@@ -45,14 +42,13 @@ var appVue = new Vue({
                 console.log(emailValidation.test(appVue.username))
                 if(emailValidation.test(appVue.username) != true){
                     alert("Please enter a valid email")
-                    appVue.username = ""
                     appVue.password = ""
                 }else{
                 $.post("/api/players", { username: appVue.username, password: appVue.password })
                     .done(function () {
                         alert("Your user was created!")
-                        appVue.login(appVue.username, appVue.password)
-                    })
+                        appVue.login(appVue.username)
+                      })
                     .fail(function () {
                         alert("User already in use")
                         appVue.username = ""
@@ -66,11 +62,11 @@ var appVue = new Vue({
         playersList: function () {
             // pushing all the players to appVue.player
             for (i = 0; i < appVue.games.length; i++) {
-                for (x = 0; x < appVue.games[i].gamePlayers.length; x++) {
-                    appVue.player.push(appVue.games[i].gamePlayers[x].player.email);
+                for (x = 0; x < appVue.games[i].players.length; x++) {
+                    appVue.player.push(appVue.games[i].players[x].player.email);
                 }
             }
-            // checking if a player is repeated and pushing them to a new array appVue.players
+            // checking if a player is repeated and then pushing them to a new array appVue.players
             for (var j = 0; j < appVue.player.length; j++) {
                 for (var z = j + 1; z < appVue.player.length; z++) {
                     if (appVue.player[j] == appVue.player[z]) {
@@ -83,9 +79,9 @@ var appVue = new Vue({
             for (var y = 0; y < appVue.players.email.length; y++) {
                 var totalScores = 0;
                 for (var i = 0; i < appVue.games.length; i++) {
-                    for (var x = 0; x < appVue.games[i].gamePlayers.length; x++) {
-                        if (appVue.players.email[y] == appVue.games[i].gamePlayers[x].player.email) {
-                            totalScores += appVue.games[i].gamePlayers[x].score;
+                    for (var x = 0; x < appVue.games[i].players.length; x++) {
+                        if (appVue.players.email[y] == appVue.games[i].players[x].player.email) {
+                            totalScores += appVue.games[i].players[x].score;
                         }
                     }
 
@@ -97,9 +93,9 @@ var appVue = new Vue({
             for (var y = 0; y < appVue.players.email.length; y++) {
                 var wonScores = 0;
                 for (var i = 0; i < appVue.games.length; i++) {
-                    for (var x = 0; x < appVue.games[i].gamePlayers.length; x++) {
-                        if (appVue.players.email[y] == appVue.games[i].gamePlayers[x].player.email) {
-                            if (appVue.games[i].gamePlayers[x].score == 1) {
+                    for (var x = 0; x < appVue.games[i].players.length; x++) {
+                        if (appVue.players.email[y] == appVue.games[i].players[x].player.email) {
+                            if (appVue.games[i].players[x].score == 1) {
                                 wonScores++;
                             }
                         }
@@ -112,9 +108,9 @@ var appVue = new Vue({
             for (var y = 0; y < appVue.players.email.length; y++) {
                 var lostScores = 0;
                 for (var i = 0; i < appVue.games.length; i++) {
-                    for (var x = 0; x < appVue.games[i].gamePlayers.length; x++) {
-                        if (appVue.players.email[y] == appVue.games[i].gamePlayers[x].player.email) {
-                            if (appVue.games[i].gamePlayers[x].score == 0) {
+                    for (var x = 0; x < appVue.games[i].players.length; x++) {
+                        if (appVue.players.email[y] == appVue.games[i].players[x].player.email) {
+                            if (appVue.games[i].players[x].score == 0) {
                                 lostScores++;
                             }
                         }
@@ -127,9 +123,9 @@ var appVue = new Vue({
             for (var y = 0; y < appVue.players.email.length; y++) {
                 var tiedScores = 0;
                 for (var i = 0; i < appVue.games.length; i++) {
-                    for (var x = 0; x < appVue.games[i].gamePlayers.length; x++) {
-                        if (appVue.players.email[y] == appVue.games[i].gamePlayers[x].player.email) {
-                            if (appVue.games[i].gamePlayers[x].score === 0.5) {
+                    for (var x = 0; x < appVue.games[i].players.length; x++) {
+                        if (appVue.players.email[y] == appVue.games[i].players[x].player.email) {
+                            if (appVue.games[i].players[x].score === 0.5) {
                                 tiedScores++;
                             }
                         }

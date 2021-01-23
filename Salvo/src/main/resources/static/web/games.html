@@ -24,9 +24,9 @@
         <li v-for='game in games'>
             Date: {{game.date}}
             <ol>
-                <li v-for='gamePlayer in game.gamePlayers'>
+                <li v-for='player in game.players'>
 
-                    Email: {{gamePlayer.player.email}}
+                    Email: {{player.player.email}}
                 </li>
             </ol>
         </li>

@@ -78,13 +78,14 @@ public class SalvoController {
 
         dto.put("id", game.getId());
         dto.put("date", game.getDate());
-        dto.put("gamePlayers", game.getGamePlayers().stream().map(gamePlayer -> makeGamePlayerDTO(gamePlayer)).collect(Collectors.toList()));
+        dto.put("players", game.getGamePlayers().stream().map(gamePlayer -> makeGamePlayerDTO(gamePlayer)).collect(Collectors.toList()));
         return dto;
     }
 
     private Object makeGamePlayerDTO(GamePlayer gamePlayer) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
-        dto.put("id", gamePlayer.getId());
+        dto.put("gpid", gamePlayer.getId());
+        dto.put("id", gamePlayer.getPlayer().getId());
         dto.put("player", makePlayerDTO(gamePlayer.getPlayer()));
         dto.put("score", gamePlayer.getScore() != null ? gamePlayer.getScore().getScore():null);
         return dto;
