@@ -13,11 +13,18 @@ var appVue = new Vue({
         },
         username: "",
         password: "",
+        },
+        filters: {
+             dateFormatted: function (value) {
+                if (!value) return ''
+                return moment(value).format('DD/MM/YYYY, h:mm A')
+             }
     },
     methods: {
         login: function () {
             if (appVue.username.length != 0 && appVue.password.length != 0) {
                 $.post("/api/login", { username: appVue.username, password: appVue.password })
+                    console.log({ username: appVue.username, password: appVue.password })
                     .done(function () {
                         alert("You're successfully logged in!")
                         location.reload()
@@ -39,7 +46,6 @@ var appVue = new Vue({
         register: function () {
             if (appVue.username.length != 0 && appVue.password.length != 0) {
                 var emailValidation = /^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-                console.log(emailValidation.test(appVue.username))
                 if(emailValidation.test(appVue.username) != true){
                     alert("Please enter a valid email")
                     appVue.password = ""
@@ -133,13 +139,18 @@ var appVue = new Vue({
                 }
                 appVue.players.tied.push(tiedScores);
             }
-        }
+        },
     }
 });
 
 fetch('/api/games')
     .then(function (res) {
-        return res.json();
+        if(res.ok){
+          return res.json();
+        }
+        else {
+            throw new error(res.status)
+        }
     })
     .then(function (json) {
         appVue.games = json.games;

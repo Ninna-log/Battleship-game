@@ -13,7 +13,7 @@ repositories {
 }
 
 bootRun {
-	sourceResources sourceSets.main
+	sourceResources sourceSets.main //lo que hace es que no se tenga que inicializar otra vez la app para que se actualice los archivos static
 }
 
 dependencies {
