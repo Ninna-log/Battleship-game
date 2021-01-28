@@ -11,20 +11,20 @@ var appVue = new Vue({
             lost: [],
             tied: [],
         },
+        gpid: null,
         username: "",
         password: "",
-        },
-        filters: {
-             dateFormatted: function (value) {
-                if (!value) return ''
-                return moment(value).format('DD/MM/YYYY, h:mm A')
-             }
+    },
+    filters: {
+        dateFormatted: function (value) {
+            if (!value) return ''
+            return moment(value).format('DD/MM/YYYY, h:mm A')
+        }
     },
     methods: {
         login: function () {
             if (appVue.username.length != 0 && appVue.password.length != 0) {
                 $.post("/api/login", { username: appVue.username, password: appVue.password })
-                    console.log({ username: appVue.username, password: appVue.password })
                     .done(function () {
                         alert("You're successfully logged in!")
                         location.reload()
@@ -46,24 +46,50 @@ var appVue = new Vue({
         register: function () {
             if (appVue.username.length != 0 && appVue.password.length != 0) {
                 var emailValidation = /^[a-zA-Z0-9.!#$%&*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-                if(emailValidation.test(appVue.username) != true){
+                if (emailValidation.test(appVue.username) != true) {
                     alert("Please enter a valid email")
                     appVue.password = ""
-                }else{
-                $.post("/api/players", { username: appVue.username, password: appVue.password })
-                    .done(function () {
-                        alert("Your user was created!")
-                        appVue.login(appVue.username)
-                      })
-                    .fail(function () {
-                        alert("User already in use")
-                        appVue.username = ""
-                        appVue.password = ""
-                    })
+                } else {
+                    $.post("/api/players", { username: appVue.username, password: appVue.password })
+                        .done(function () {
+                            alert("Your user was created!")
+                            appVue.login(appVue.username)
+                        })
+                        .fail(function () {
+                            alert("User already in use")
+                            appVue.username = ""
+                            appVue.password = ""
+                        })
                 }
             } else {
                 alert("Missing data")
             }
+        },
+        createGame: function () {
+            // creating a game if the user is logged in
+            $.post("/api/games")
+                .done(function (data) {
+                    appVue.gpid = data.gpid;
+                    console.log(data)
+                    alert("The game was successfully created!")
+                    window.open("/web/game.html?gp=" + appVue.gpid)
+                })
+        },
+        joinGame: function (game) {
+            var id = game.getAttribute("data-game");
+            $.post("/api/game/"+ id +"/players")/api/game/1/players
+                .done(function (data) {
+                    appVue.gpid = data.gpid;
+                    console.log(data)
+                    window.open("/web/game.html?gp=" + appVue.gpid)
+                })
+        },
+        logout: function () {
+            $.post("/api/logout")
+                .done(function () {
+                    alert("You're successfully logged out")
+                    location.reload()
+                })
         },
         playersList: function () {
             // pushing all the players to appVue.player
@@ -145,8 +171,8 @@ var appVue = new Vue({
 
 fetch('/api/games')
     .then(function (res) {
-        if(res.ok){
-          return res.json();
+        if (res.ok) {
+            return res.json();
         }
         else {
             throw new error(res.status)

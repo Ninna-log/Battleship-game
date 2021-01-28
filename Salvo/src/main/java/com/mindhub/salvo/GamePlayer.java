@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -36,6 +37,10 @@ public class GamePlayer {
         this.player = player;    // Non-empty constructor which will be receiving when the GamePlayer object is created
         this.game = game;          // a Player, a Game, a Date, a Ship and a score
         this.date = date;
+    }
+
+    public GamePlayer(Player player, Optional<Game> game, LocalDateTime now) {
+
     }
 
     public Score getScore() {

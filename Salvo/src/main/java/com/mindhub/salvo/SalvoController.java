@@ -48,27 +48,47 @@ public class SalvoController {
 
         playerRepository.save(new Player(username, passwordEncoder.encode(password)));
         return new ResponseEntity<>(HttpStatus.CREATED);
-
     }
 
-    @PostMapping("/games")
-    public ResponseEntity<Object> createGame(@RequestBody Authentication authentication) {
+    @PostMapping("/games") // adding the ability to create a game
+    public ResponseEntity<Map<String, Object>> createGame(Authentication authentication) {
 
         if (isGuest(authentication)) {
-            return new ResponseEntity<>("Unauthenticated user. Please login", HttpStatus.UNAUTHORIZED);
-        }else{
+            return new ResponseEntity<>(makeMap("error", "Unauthenticated user. Please login"), HttpStatus.UNAUTHORIZED);
+            // gets the current user with the authentication object, and if there is none, it is sent an Unauthorized response
+        } else {
             Game game = gameRepository.save(new Game(LocalDateTime.now()));
             Player player = playerRepository.findByUserName(authentication.getName());
-            GamePlayer gamePlayer = gamePlayerRepository.save(new GamePlayer(player,game,LocalDateTime.now()));
-
-            return new ResponseEntity<>(gamePlayer.getId(), HttpStatus.CREATED);
-            //gets the current user
-            //if there is none, it should send an Unauthorized response
-            //creates and saves a new game
-            //creates and saves a new game player for this game and the current user
-            //send a Created response, with JSON containing the new game player ID, e.g., { "gpid": 32 }
+            GamePlayer gamePlayer = gamePlayerRepository.save(new GamePlayer(player, game, LocalDateTime.now()));
+            // creates and saves a new game, and then saves a new gamePlayer for this game and the current user
+            return new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
+            // and then sends a Created response, with json containing the new gamePlayer id, e.g, {"gpid": 32}
         }
+    }
 
+    @PostMapping("/game/{gameId}/players") // adding the ability to create a game
+    public ResponseEntity<Map<String, Object>> joinGame(@PathVariable Long gameId, Authentication authentication) {
+        if (isGuest(authentication)) { // is a guest
+            return new ResponseEntity<>(makeMap("error", "Unauthenticated user. Please login"), HttpStatus.UNAUTHORIZED);
+            // gets the current user with the authentication object, and if there is none, it is sent an Unauthorized response
+        } else { // if it isn't a guest
+            Optional<Game> game = gameRepository.findById(gameId); // gets the game with that ID. An can be optional, can be null or non-null
+            if (game.isEmpty()) { // if there is none, it sends a forbidden response with descriptive text, such as "No such game"
+                return new ResponseEntity<>(makeMap("error", "No such game"), HttpStatus.NOT_FOUND);
+            } else if (game.get().getPlayers().size() == 2) { // And if it is exists, checks that the game has only one player
+                return new ResponseEntity<>(makeMap("error", "Sorry, game is full"), HttpStatus.FORBIDDEN);
+            } else { // On the contrary, game has only one player
+                Player player = playerRepository.findByUserName(authentication.getName());
+                if (game.get().getPlayers().stream().findAny().get().getId() == player.getId()) {
+                    return new ResponseEntity<>(makeMap("error", "Not Allowed"), HttpStatus.FORBIDDEN);
+
+                }else{
+                    // creates and saves a new game player, with this game and the current user
+                    GamePlayer gamePlayer = gamePlayerRepository.save(new GamePlayer(player, game, LocalDateTime.now()));
+                    return new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
+                }
+            }
+        }
     }
 
     @RequestMapping("/games")
