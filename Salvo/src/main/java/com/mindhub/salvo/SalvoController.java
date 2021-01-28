@@ -81,10 +81,9 @@ public class SalvoController {
                 Player player = playerRepository.findByUserName(authentication.getName());
                 if (game.get().getPlayers().stream().findAny().get().getId() == player.getId()) {
                     return new ResponseEntity<>(makeMap("error", "Not Allowed"), HttpStatus.FORBIDDEN);
-
                 }else{
                     // creates and saves a new game player, with this game and the current user
-                    GamePlayer gamePlayer = gamePlayerRepository.save(new GamePlayer(player, game, LocalDateTime.now()));
+                    GamePlayer gamePlayer = gamePlayerRepository.save(new GamePlayer(player, game.get(), LocalDateTime.now()));
                     return new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
                 }
             }

@@ -75,13 +75,15 @@ var appVue = new Vue({
                     window.open("/web/game.html?gp=" + appVue.gpid)
                 })
         },
-        joinGame: function (game) {
-            var id = game.getAttribute("data-game");
-            $.post("/api/game/"+ id +"/players")/api/game/1/players
+        joinGame: function (id) {
+               $.post("/api/game/"+ id +"/players")
                 .done(function (data) {
                     appVue.gpid = data.gpid;
                     console.log(data)
-                    window.open("/web/game.html?gp=" + appVue.gpid)
+                    window.open("/web/game.html?gp=" + data.gpid)
+                })
+                .fail(function () {
+                   alert("Sorry, there's been an error")
                 })
         },
         logout: function () {

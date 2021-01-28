@@ -39,10 +39,6 @@ public class GamePlayer {
         this.date = date;
     }
 
-    public GamePlayer(Player player, Optional<Game> game, LocalDateTime now) {
-
-    }
-
     public Score getScore() {
         return player.getScore(game);
     }
