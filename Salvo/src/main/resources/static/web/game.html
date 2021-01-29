@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<html xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <link rel="stylesheet" href="/web/game.css">
 </head>
@@ -8,6 +8,8 @@
                 <h1>{{ viewer != null ? viewer.email : '' }} vs {{ enemy != null ? enemy.email : ''}}</h1>
             </div>
                 <div>
+                    <button type="button" v-on:click="logout">SignOut</button>
+                    <button type="button" v-on:click="goBack">Go back</button>
                     <div class="table">
                         <h1>Ships locations</h1>
                           <table border="1">

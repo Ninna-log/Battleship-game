@@ -24,8 +24,8 @@
     <ul>
         <li v-for='game in games'>
             Date: {{game.date|dateFormatted}}
-            <button v-if="authentication != null && game.players[0].player.id == authentication.id"><a v-bind:href="'http://localhost:8080/web/game.html?gp= '+ game.players[0].gpid">Link to the game</a></button>
-            <button v-else-if="authentication != null && (game.players[1] != null && game.players[1].player.id) == authentication.id"><a v-bind:href="'http://localhost:8080/web/game.html?gp= '+ game.players[1].gpid">Link to the game</a></button>
+            <button v-if="authentication != null && game.players[0].player.id == authentication.id"><a v-bind:href="'http://localhost:8080/web/game.html?gp='+ game.players[0].gpid">Link to the game</a></button>
+            <button v-else-if="authentication != null && (game.players[1] != null && game.players[1].player.id) == authentication.id"><a v-bind:href="'http://localhost:8080/web/game.html?gp='+ game.players[1].gpid">Link to the game</a></button>
             <button v-if="authentication != null && game.players.length != 2 && game.players[0].player.id != authentication.id" type="button" v-on:click="joinGame(game.id)">Join Game</button>
             <ol>
                 <li v-for='player in game.players'>

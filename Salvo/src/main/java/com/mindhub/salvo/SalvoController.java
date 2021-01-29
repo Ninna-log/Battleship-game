@@ -83,9 +83,30 @@ public class SalvoController {
                     return new ResponseEntity<>(makeMap("error", "Not Allowed"), HttpStatus.FORBIDDEN);
                 }else{
                     // creates and saves a new game player, with this game and the current user
-                    GamePlayer gamePlayer = gamePlayerRepository.save(new GamePlayer(player, game.get(), LocalDateTime.now()));
+                   GamePlayer gamePlayer = gamePlayerRepository.save(new GamePlayer(player, game.get(), LocalDateTime.now()));
                     return new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
                 }
+            }
+        }
+    }
+
+    @PostMapping("/games/players/{gamePlayerId}/ships")
+    public ResponseEntity<Map<String, Object>> placingShips(@PathVariable Long gamePlayerId, @RequestBody List<Ship>ships, Authentication authentication) {
+        Player player = playerRepository.findByUserName(authentication.getName());
+        Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
+        if (isGuest(authentication) || gamePlayer.isEmpty() || gamePlayer.get().getPlayer().getId() != player.getId()) {
+    // if it's a guest, or there is no gamePlayer with the given ID, or the current user is not the game player the ID references
+            return new ResponseEntity<>(makeMap("error", "Not authorized"), HttpStatus.UNAUTHORIZED);
+        }else{
+            // A Forbidden response should be sent if the user already has ships placed //
+            if (gamePlayer.get().getShips().size() > 0){
+                return new ResponseEntity<>(makeMap("error", "Not authorized"), HttpStatus.FORBIDDEN);
+            }else{
+                // otherwise, the ships should be added to the game player and saved, and a Created response should be sent.
+                Ship ship13 = new Ship("Submarine", shipLocations13);
+                gamePlayer.get().addShip();
+                Ship ship13 = new Ship("Submarine", shipLocations13);
+                return new ResponseEntity<>(makeMap("gpid", "Your ship was crated"), HttpStatus.CREATED);
             }
         }
     }

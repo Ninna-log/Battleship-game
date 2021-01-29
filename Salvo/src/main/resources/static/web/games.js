@@ -42,6 +42,9 @@ var appVue = new Vue({
                     alert("You're successfully logged out")
                     location.reload()
                 })
+                .fail(function () {
+                    alert("There's been an error. Please, try again")
+                })
         },
         register: function () {
             if (appVue.username.length != 0 && appVue.password.length != 0) {
@@ -74,6 +77,9 @@ var appVue = new Vue({
                     alert("The game was successfully created!")
                     window.open("/web/game.html?gp=" + appVue.gpid)
                 })
+                .fail(function () {
+                alert("Sorry, there's been an error")
+            })
         },
         joinGame: function (id) {
                $.post("/api/game/"+ id +"/players")
@@ -84,13 +90,6 @@ var appVue = new Vue({
                 })
                 .fail(function () {
                    alert("Sorry, there's been an error")
-                })
-        },
-        logout: function () {
-            $.post("/api/logout")
-                .done(function () {
-                    alert("You're successfully logged out")
-                    location.reload()
                 })
         },
         playersList: function () {
