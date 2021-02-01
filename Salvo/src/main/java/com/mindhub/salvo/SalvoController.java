@@ -35,6 +35,9 @@ public class SalvoController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ShipRepository shipRepository;
+
     @PostMapping("/players")
     public ResponseEntity<Object> register(@RequestParam String username, @RequestParam String password) {
 
@@ -95,18 +98,18 @@ public class SalvoController {
         Player player = playerRepository.findByUserName(authentication.getName());
         Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
         if (isGuest(authentication) || gamePlayer.isEmpty() || gamePlayer.get().getPlayer().getId() != player.getId()) {
-    // if it's a guest, or there is no gamePlayer with the given ID, or the current user is not the game player the ID references
+            // if it's a guest, or there is no gamePlayer with the given ID, or the current user is not the game player the ID references
+            // an unauthorized response is sent
             return new ResponseEntity<>(makeMap("error", "Not authorized"), HttpStatus.UNAUTHORIZED);
         }else{
             // A Forbidden response should be sent if the user already has ships placed //
             if (gamePlayer.get().getShips().size() > 0){
                 return new ResponseEntity<>(makeMap("error", "Not authorized"), HttpStatus.FORBIDDEN);
             }else{
-                // otherwise, the ships should be added to the game player and saved, and a Created response should be sent.
-                Ship ship13 = new Ship("Submarine", shipLocations13);
-                gamePlayer.get().addShip();
-                Ship ship13 = new Ship("Submarine", shipLocations13);
-                return new ResponseEntity<>(makeMap("gpid", "Your ship was crated"), HttpStatus.CREATED);
+                ships.forEach(ship -> gamePlayer.get().addShip(ship));
+                gamePlayerRepository.save(gamePlayer.get());
+                //Otherwise, the ships should be added to the game player and saved, and a Created response should be sent.
+                   return new ResponseEntity<>(makeMap("gpid", "Your ship was created"), HttpStatus.CREATED);
             }
         }
     }
