@@ -7,7 +7,16 @@ var appVue = new Vue({
         gameView: null,
         viewer: null,
         enemy: null,
-        authentication: null
+        authentication: null,
+        ships: [
+                 { "type": "patroal boat", "locations": ["A1", "B1", "C1"] },
+                 { "type": "carrier", "locations": ["B5", "B6"] },
+                 { "type": "destroyer", "locations": ["C5", "C6"] },
+                 { "type": "submarine", "locations": ["G1", "G2", "A2"] },
+                 { "type": "battleship", "locations": ["D4", "C5"] }
+               ],
+        shipSelected: "",
+        position: "vertical",
     },
     methods: {
         logout: function () {
@@ -17,11 +26,26 @@ var appVue = new Vue({
                     window.open("/web/games.html")
                 })
                 .fail(function () {
-                   alert("There's been an error. Please, try again.)
+                   alert("There's been an error. Please, try again")
                 })
         },
         goBack: function () {
             window.open("/web/games.html")
+        },
+        addingShips: function (gpid) {
+            $.post({
+                url: "/api/games/players/" + gpid + "/ships",
+                data: JSON.stringify(appVue.ships),
+                dataType: "text",
+                contentType: "application/json",
+                })
+               .done(function (response) {
+                alert( "Ship added " );
+                location.reload()
+                })
+               .fail(function (error) {
+                alert("Failed to add Ship:" + error.responseText);
+               })
         },
         drawingShips: function () {
             for (var i = 0; i < appVue.gameView.ships.length; i++) {

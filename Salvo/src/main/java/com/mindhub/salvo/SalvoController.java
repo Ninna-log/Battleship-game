@@ -95,21 +95,35 @@ public class SalvoController {
 
     @PostMapping("/games/players/{gamePlayerId}/ships")
     public ResponseEntity<Map<String, Object>> placingShips(@PathVariable Long gamePlayerId, @RequestBody List<Ship>ships, Authentication authentication) {
-        Player player = playerRepository.findByUserName(authentication.getName());
-        Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
-        if (isGuest(authentication) || gamePlayer.isEmpty() || gamePlayer.get().getPlayer().getId() != player.getId()) {
-            // if it's a guest, or there is no gamePlayer with the given ID, or the current user is not the game player the ID references
-            // an unauthorized response is sent
-            return new ResponseEntity<>(makeMap("error", "Not authorized"), HttpStatus.UNAUTHORIZED);
+
+        if (isGuest(authentication)) {
+            return new ResponseEntity<>(makeMap("error", "Please, login"), HttpStatus.UNAUTHORIZED);
         }else{
-            // A Forbidden response should be sent if the user already has ships placed //
-            if (gamePlayer.get().getShips().size() > 0){
-                return new ResponseEntity<>(makeMap("error", "Not authorized"), HttpStatus.FORBIDDEN);
+            Optional<GamePlayer> gamePlayerOptional = gamePlayerRepository.findById(gamePlayerId);
+            if(gamePlayerOptional.isEmpty()){
+                return new ResponseEntity<>(makeMap("error", "Not Found"), HttpStatus.NOT_FOUND);
             }else{
-                ships.forEach(ship -> gamePlayer.get().addShip(ship));
-                gamePlayerRepository.save(gamePlayer.get());
-                //Otherwise, the ships should be added to the game player and saved, and a Created response should be sent.
-                   return new ResponseEntity<>(makeMap("gpid", "Your ship was created"), HttpStatus.CREATED);
+                // gamePlayer isn't Optional because it definitely
+                Player player = playerRepository.findByUserName(authentication.getName());
+                // a gamePlayer variable is declared to get rid of the .get()
+                GamePlayer gamePlayer = gamePlayerOptional.get();
+
+                if(gamePlayer.getPlayer().getId() != player.getId()){
+                    // and if the gamePlayer doesn't match with the current user forbidden response is sent
+                    return new ResponseEntity<>(makeMap("error", "No Access"), HttpStatus.FORBIDDEN);
+                }else if (gamePlayer.getShips().size() > 0){
+                    return new ResponseEntity<>(makeMap("success","Ships already placed"), HttpStatus.FORBIDDEN);
+                }else if(ships.size() != 5 ) {
+                    return new ResponseEntity<>(makeMap("success","You should add 5 ships"), HttpStatus.FORBIDDEN);
+                }else{
+                    ships.forEach((ship)-> {
+                        gamePlayer.addShip(ship);
+                        gamePlayerRepository.save(gamePlayer);
+                    });
+
+                    //Otherwise, the ships should be added to the game player and saved, and a Created response should be sent.
+                    return new ResponseEntity<>(makeMap("gpid", "Your ships were added"), HttpStatus.CREATED);
+                }
             }
         }
     }

@@ -24,6 +24,11 @@ body {
     background-color: red;
 }
 
+#players h1{
+    display: flex;
+    justify-content: center;
+}
+
 #table div {
     display: flex;
     align-items: start;
