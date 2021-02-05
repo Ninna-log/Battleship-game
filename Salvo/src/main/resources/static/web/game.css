@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 * {
     box-sizing: border-box;
 }
@@ -25,11 +27,13 @@ body {
 }
 
 #players h1{
+    font-family: 'Press Start 2P', cursive;
     display: flex;
     justify-content: center;
 }
 
 #table div {
+    margin-top: 10px;
     display: flex;
     align-items: start;
     justify-content: center;
@@ -45,6 +49,14 @@ body {
     width: 500px;
     height: 500px;
 }
+#table .table table tbody tr td,
+#table .table table thead tr th,
+#table .table table thead {
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+}
 
-
-
+#table #myAlert {
+    display: none;
+    transition: flex 0.7s ease-in;
+}

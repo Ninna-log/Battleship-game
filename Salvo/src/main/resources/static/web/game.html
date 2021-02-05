@@ -9,19 +9,22 @@
 <body>
 <div id="table" class="container-fluid">
     <div class="row justify-content-between">
-        <div class="col-2">
-            <button type="button" v-on:click="logout">SignOut</button>
+        <div class="alert alert-danger" role="alert" id="myAlert">
+            Do the math, ship doesn't fit!
         </div>
         <div class="col-2">
-            <button type="button" v-on:click="goBack">Go back</button>
+            <button type="button" @click="logout">SignOut</button>
+        </div>
+        <div class="col-2">
+            <button type="button" @click="goBack">Go back</button>
         </div>
     </div>
     <div class="row" id="players">
-        <h1>{{ viewer != null ? viewer.email : '' }} vs {{ enemy != null ? enemy.email : ''}}</h1>
+        <h1>{{ viewer != null ? viewer.player.email : '' }} vs. {{ enemy != null ? enemy.player.email : '..'}}</h1>
     </div>
     <div class="row">
 
-            <div class="col align-self-start" v-show="gameView != null && gameView.ships.length != 5">
+            <div class="col modal-footer">
                 <table class="table">
                     <thead>
                     <tr>
@@ -34,7 +37,8 @@
                     <tbody>
                     <tr>
                         <th>1</th>
-                        <td><input type="radio" id="Carrier" value="Carrier"><label for="Carrier">Carrier</label>
+                        <td><input type="radio" id="Carrier" value="Carrier" v-model="shipSelected">
+                            <label for="Carrier">Aircraft Carrier</label>
                         </td>
                         <th>5</th>
                     </tr>
@@ -68,17 +72,20 @@
                     </tr>
                     </tbody>
                 </table>
-
+                <div class="row">
                 <input type="radio" id="vertical" value="vertical" v-model="position">
-                <label for="vertical">  Vertical</label>
-
+                <label for="vertical">Vertical</label>
+                </div>
+                <div class="row">
                 <input type="radio" id="horizontal" value="horizontal" v-model="position">
-                <label for="horizontal">  Horizontal</label>
-                <button type="button" v-on:click="addingShips(gameView.gamePlayers[0].gpid)">Add Ship</button>
+                <label for="horizontal">Horizontal</label>
+                    <div class="row">
+                        <button @click="addingShips(viewer.gpid)">Add Ship</button>
+                    </div>
+                </div>
             </div>
 
-
-        <div class="table col-4">
+        <div class="table col">
             <h1>Ships locations</h1>
             <table border="1">
                 <thead>
@@ -90,13 +97,13 @@
                 <tbody>
                 <tr v-for="row in rows">
                     <td>{{row}}</td>
-                    <td v-for="column in columns" v-bind:id="row + column"></td>
+                    <td v-on:click="newShip(row , column)" v-for="column in columns" v-bind:id="row + column"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="table col-4">
+        <div class="table col">
             <h1>Salvoes locations</h1>
             <table border="1">
                 <thead>

@@ -114,7 +114,7 @@ public class SalvoController {
                 }else if (gamePlayer.getShips().size() > 0){
                     return new ResponseEntity<>(makeMap("success","Ships already placed"), HttpStatus.FORBIDDEN);
                 }else if(ships.size() != 5 ) {
-                    return new ResponseEntity<>(makeMap("success","You should add 5 ships"), HttpStatus.FORBIDDEN);
+                    return new ResponseEntity<>(makeMap("error","You should add 5 ships"), HttpStatus.FORBIDDEN);
                 }else{
                     ships.forEach((ship)-> {
                         gamePlayer.addShip(ship);
