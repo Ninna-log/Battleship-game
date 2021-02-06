@@ -14,6 +14,7 @@ var appVue = new Vue({
         position: "",
         row: null,
         col: null,
+        cells: 0
     },
     methods: {
         logout: function () {
@@ -23,7 +24,7 @@ var appVue = new Vue({
                     window.open("/web/games.html")
                 })
                 .fail(function () {
-                   alert("There's been an error. Please, try again")
+                    alert("There's been an error. Please, try again")
                 })
         },
         goBack: function () {
@@ -36,93 +37,113 @@ var appVue = new Vue({
                 dataType: "text",
                 contentType: "application/json",
             })
-            .done(function (response) {
-                alert( "Ship added " );
-                location.reload()
-            })
-            .fail(function (error) {
-                alert(JSON.parse(error.responseText).error);
-               })
+                .done(function (response) {
+                    alert("Ships added ");
+                    location.reload()
+                })
+                .fail(function (error) {
+                    alert(JSON.parse(error.responseText).error);
+                })
         },
-        newShip: function(row, column){
-            console.log(row, column, appVue.shipSelected, appVue.position)
-            if(appVue.shipSelected == "" || appVue.position == ""){      // if ship or position hasn´t been selected
+        newShip: function (row, col) {
+            if (appVue.shipSelected == "" || appVue.position == "") {  // if the type of ship or position hasn´t been selected
                 alert("Please select ship and position");
+            }
+            else {    // if ship and position has already been selected
+                appVue.row = row;
+                appVue.col = col;
+                // then verifies that the ship selected isn't the same that previously was chosen
+                if ((appVue.ships.findIndex(ship => ship.type === appVue.shipSelected) != -1)) {
+                    appVue.eraseShips();
+                    appVue.drawShips();
                 }
-                else{    // if ship and position has already been selected
-                     appVue.row = row;
-                     appVue.col = column;
-
-                     if((appVue.ships.findIndex(shipp => shipp.type === appVue.shipSelected) == -1)) // retorna -1 si no encuentra nada
-                         var cells = 0;
-                         if(appVue.shipSelected == "Carrier"){
-                            cells = 5;
-                            console.log(appVue.shipSelected + " " + cells)
-                         }
-                         if(appVue.shipSelected == "Battleship"){
-                            cells = 4;
-                            console.log(appVue.shipSelected + " " + cells)
-                         }
-                         if(appVue.shipSelected == "Submarine"){
-                            cells = 3;
-                            console.log(appVue.shipSelected + " " + cells)
-                         }
-                         if(appVue.shipSelected == "Destroyer"){
-                            cells = 3;
-                            console.log(appVue.shipSelected + " " + cells)
-                         }
-                         if(appVue.shipSelected == "Patrol Boat"){
-                            cells = 2;
-                            console.log(appVue.shipSelected + " " + cells)
-                         }
-                         if(appVue.position == "horizontal"){
-                            var ship = {"type": appVue.shipSelected, "locations":[]};
-                            if(appVue.col + cells <= 11){     // sees if column chosen plus number of the ship's length doesn't exceeds number of cells
-                               for(var i = 0; i < cells; i++){  // if doesn't exceeds makes a loop through the ship's length
-                                  ship.locations.push(appVue.row + (appVue.col+i)); // in order to to add 1 to column and then concatenate row with column
-                               }     // then it checks if there's another ship on the same location
-                               var index = appVue.ships.findIndex(shipp => shipp.locations.findIndex(loc => ship.locations.includes(loc)) >= 0)
-                               console.log(index);    // findIndex() returns 0 if the element was found, and on the contrary returns -1
-                               if(index == 0){
-                                    alert("You really want 2 ships one on top of the other?");
-                               }
-                               else {
-                                   for(var i = 0; i < ship.locations.length; i++){
-                                       document.getElementById(ship.locations[i]).classList.add('shipColor');
-                                   }
-                                   appVue.ships.push(ship);
-                               }
-                            }
-                            else{
-                                alert("Do the math, ship doesn't fit")
-                            }
-                         }
-                         else{   // position it's vertical
-                            var ship = {"type": appVue.shipSelected, "locations":[]};
-                            var index = appVue.rows.indexOf(appVue.row);
-                            if((index + 1) + cells <= 11){
-                                for(var i = 0; i < cells; i++){
-                                    ship.locations.push((String.fromCharCode(appVue.row.charCodeAt(0)+i)) + appVue.col);
-                                }                   // findIndex() returns 0 if the element was found, and on the contrary returns -1
-                                var index = appVue.ships.findIndex(shipp => shipp.locations.findIndex(loc => ship.locations.includes(loc)) >= 0)
-                                console.log(index);
-                                if(index == 0){
-                                    alert("You really want 2 ships one on top of the other?");
-                                }
-                                else{
-                                    for(var i = 0; i < ship.locations.length; i++){
-                                        document.getElementById(ship.locations[i]).classList.add('shipColor');
-                                    }
-                                    appVue.ships.push(ship);
-                                }
-                            }
-                            else{
-                                alert("Do the math, ship doesn't fit")
-                            }
-                     }
+                else {
+                    appVue.drawShips();  // otherwise, if findIndex() returns -1, the ship wasn't found
                 }
-                else{
-                    alert("ship erased")
+            }
+        },
+        shipsTypes: function () {
+            switch (appVue.shipSelected){
+            case "Carrier":
+                appVue.cells = 5;
+                break;
+            case "Battleship":
+                appVue.cells = 4;
+                break;
+            case "submarine":
+                appVue.cells = 3;
+                break;
+            case "Destroyer":
+                appVue.cells = 3;
+                break;
+            case "Patroal Boat":
+                appVue.cells = 2;
+                break;
+            }
+        },
+        eraseShips: function () {
+            appVue.shipsTypes();
+            if (appVue.position == "horizontal") { // if it's horizontal
+                // if the ship selected is found in ship.type then every index location of that ship
+                var loc = appVue.ships.findIndex(navecita => navecita.type === appVue.shipSelected); // is looped through
+                for (var i = 0; i < appVue.ships[loc].locations.length; i++) {
+                    document.getElementById(appVue.ships[loc].locations[i]).classList.remove('shipColor'); // in order to remove that color class
+                }
+                appVue.ships.splice(loc); // eliminates all the elements given by loc which is where findIndex() found the same ship
+            }
+            if (appVue.position == "vertical") { // if it's vertical
+                var loc = appVue.ships.findIndex(ship => ship.type === appVue.shipSelected);
+                for (var i = 0; i < appVue.ships[loc].locations.length; i++) {
+                    document.getElementById(appVue.ships[loc].locations[i]).classList.remove('shipColor');
+                }
+                appVue.ships.splice(loc);
+            }
+        },
+        drawShips: function () {
+            appVue.shipsTypes();
+            if (appVue.position == "horizontal") {
+                var ship = { "type": appVue.shipSelected, "locations": [] };
+                if (appVue.col + appVue.cells <= 11) {     // sees if column chosen plus number of the ship's length doesn't exceeds number of cells
+                    for (var i = 0; i < appVue.cells; i++) {  // if doesn't exceeds makes a loop through the ship's length
+                        ship.locations.push(appVue.row + (appVue.col + i)); // in order to to add 1 to column and then concatenate row with column
+                    }     // then it checks if there's another ship on the same location
+                    var index = appVue.ships.findIndex(shipp => shipp.locations.findIndex(loc => ship.locations.includes(loc)) >= 0)
+                    console.log(index);    // findIndex() returns 0 if the element was found, and on the contrary returns -1
+                    if (index != -1) {
+                        alert("Nope, my dude");
+                    }
+                    else {
+                        for (var i = 0; i < ship.locations.length; i++) {
+                            document.getElementById(ship.locations[i]).classList.add('shipColor');
+                        }
+                        appVue.ships.push(ship);
+                    }
+                }
+                else {
+                    alert("Do the math, ship doesn't fit")
+                }
+            }
+            else {   // position it's vertical
+                var ship = { "type": appVue.shipSelected, "locations": [] };
+                var index = appVue.rows.indexOf(appVue.row);
+                if ((index + 1) + appVue.cells <= 11) {
+                    for (var i = 0; i < appVue.cells; i++) {
+                        ship.locations.push((String.fromCharCode(appVue.row.charCodeAt(0) + i)) + appVue.col);
+                    }                   // findIndex() returns 0 if the element was found, and on the contrary returns -1
+                    var index = appVue.ships.findIndex(navecita => navecita.locations.findIndex(loc => ship.locations.includes(loc)) >= 0)
+                    console.log(index);
+                    if (index != -1) { // if ship is on top of another ship
+                        alert("Nope, my dude");
+                    }
+                    else {
+                        for (var i = 0; i < ship.locations.length; i++) {
+                            document.getElementById(ship.locations[i]).classList.add('shipColor');
+                        }
+                        appVue.ships.push(ship);
+                    }
+                }
+                else {
+                    alert("Do the math, ship doesn't fit")
                 }
             }
         },
@@ -167,7 +188,7 @@ var appVue = new Vue({
             }
         },
         shipControls: function () {
-          appVue.showShipControls = appVue.gameView != null && appVue.gameView.ships.length != 5;
+            appVue.showShipControls = appVue.gameView != null && appVue.gameView.ships.length != 5;
         }
     }
 });
