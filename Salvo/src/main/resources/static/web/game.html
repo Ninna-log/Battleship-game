@@ -24,7 +24,7 @@
     </div>
     <div class="row">
 
-            <div class="col modal-footer">
+            <div v-show="showShipControls == true" class="col modal-footer">
                 <table class="table">
                     <thead>
                     <tr>
@@ -66,7 +66,7 @@
                     <tr>
                         <th>1</th>
                         <td><input type="radio" id="PatrolBoat" value="Patroal Boat" v-model="shipSelected">
-                            <label for="PatrolBoat">Patrol Boat</label>
+                            <label for="PatrolBoat">Patroal Boat</label>
                         </td>
                         <th>2</th>
                     </tr>

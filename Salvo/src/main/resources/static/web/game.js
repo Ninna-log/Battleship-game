@@ -52,12 +52,12 @@ var appVue = new Vue({
             else {    // if ship and position has already been selected
                 appVue.row = row;
                 appVue.col = col;
-                // then verifies that the ship selected isn't the same that previously was chosen
-                if ((appVue.ships.findIndex(ship => ship.type === appVue.shipSelected) != -1)) {
+
+                appVue.shipsTypes();
+                if (appVue.ships.findIndex(ship => ship.type === appVue.shipSelected) != -1) {
                     appVue.eraseShips();
                     appVue.drawShips();
-                }
-                else {
+                }else if (appVue.ships.findIndex(ship => ship.type === appVue.shipSelected) == -1) {
                     appVue.drawShips();  // otherwise, if findIndex() returns -1, the ship wasn't found
                 }
             }
@@ -70,7 +70,7 @@ var appVue = new Vue({
             case "Battleship":
                 appVue.cells = 4;
                 break;
-            case "submarine":
+            case "Submarine":
                 appVue.cells = 3;
                 break;
             case "Destroyer":
@@ -82,25 +82,24 @@ var appVue = new Vue({
             }
         },
         eraseShips: function () {
-            appVue.shipsTypes();
-            if (appVue.position == "horizontal") { // if it's horizontal
+            if (appVue.position == "horizontal" && appVue.col + appVue.cells <= 11) { // if it's horizontal
                 // if the ship selected is found in ship.type then every index location of that ship
                 var loc = appVue.ships.findIndex(navecita => navecita.type === appVue.shipSelected); // is looped through
                 for (var i = 0; i < appVue.ships[loc].locations.length; i++) {
                     document.getElementById(appVue.ships[loc].locations[i]).classList.remove('shipColor'); // in order to remove that color class
                 }
-                appVue.ships.splice(loc); // eliminates all the elements given by loc which is where findIndex() found the same ship
+                appVue.ships.splice(loc,1); // eliminates all the elements given by loc which is where findIndex() found the same ship
             }
-            if (appVue.position == "vertical") { // if it's vertical
+            var index = appVue.rows.indexOf(appVue.row);
+            if (appVue.position == "vertical" && ((index + 1) + appVue.cells <= 11)) { // if it's vertical
                 var loc = appVue.ships.findIndex(ship => ship.type === appVue.shipSelected);
                 for (var i = 0; i < appVue.ships[loc].locations.length; i++) {
                     document.getElementById(appVue.ships[loc].locations[i]).classList.remove('shipColor');
                 }
-                appVue.ships.splice(loc);
+                appVue.ships.splice(loc,1);
             }
         },
         drawShips: function () {
-            appVue.shipsTypes();
             if (appVue.position == "horizontal") {
                 var ship = { "type": appVue.shipSelected, "locations": [] };
                 if (appVue.col + appVue.cells <= 11) {     // sees if column chosen plus number of the ship's length doesn't exceeds number of cells
@@ -108,7 +107,7 @@ var appVue = new Vue({
                         ship.locations.push(appVue.row + (appVue.col + i)); // in order to to add 1 to column and then concatenate row with column
                     }     // then it checks if there's another ship on the same location
                     var index = appVue.ships.findIndex(shipp => shipp.locations.findIndex(loc => ship.locations.includes(loc)) >= 0)
-                    console.log(index);    // findIndex() returns 0 if the element was found, and on the contrary returns -1
+                    // findIndex() returns 0 if the element was found, and on the contrary returns -1
                     if (index != -1) {
                         alert("Nope, my dude");
                     }
@@ -131,7 +130,6 @@ var appVue = new Vue({
                         ship.locations.push((String.fromCharCode(appVue.row.charCodeAt(0) + i)) + appVue.col);
                     }                   // findIndex() returns 0 if the element was found, and on the contrary returns -1
                     var index = appVue.ships.findIndex(navecita => navecita.locations.findIndex(loc => ship.locations.includes(loc)) >= 0)
-                    console.log(index);
                     if (index != -1) { // if ship is on top of another ship
                         alert("Nope, my dude");
                     }
@@ -189,6 +187,7 @@ var appVue = new Vue({
         },
         shipControls: function () {
             appVue.showShipControls = appVue.gameView != null && appVue.gameView.ships.length != 5;
+            console.log(appVue.showShipControls);
         }
     }
 });
