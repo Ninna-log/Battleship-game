@@ -103,7 +103,6 @@ public class SalvoController {
             if(gamePlayerOptional.isEmpty()){
                 return new ResponseEntity<>(makeMap("error", "Not Found"), HttpStatus.NOT_FOUND);
             }else{
-                // gamePlayer isn't Optional because it definitely
                 Player player = playerRepository.findByUserName(authentication.getName());
                 // a gamePlayer variable is declared to get rid of the .get()
                 GamePlayer gamePlayer = gamePlayerOptional.get();
@@ -113,7 +112,7 @@ public class SalvoController {
                     return new ResponseEntity<>(makeMap("error", "No Access"), HttpStatus.FORBIDDEN);
                 }else if (gamePlayer.getShips().size() > 0){
                     return new ResponseEntity<>(makeMap("success","Ships already placed"), HttpStatus.FORBIDDEN);
-                }else if(ships.size() != 5 ) {
+                }else if(ships.size() != 5) {
                     return new ResponseEntity<>(makeMap("error","You should add 5 ships"), HttpStatus.FORBIDDEN);
                 }else{
                     ships.forEach((ship)-> {
@@ -123,6 +122,32 @@ public class SalvoController {
 
                     //Otherwise, the ships should be added to the game player and saved, and a Created response should be sent.
                     return new ResponseEntity<>(makeMap("gpid", "Your ships were added"), HttpStatus.CREATED);
+                }
+            }
+        }
+    }
+
+    @PostMapping("/games/players/{gamePlayerId}/salvoes")
+    public ResponseEntity<Map<String, Object>> firingSalvoes(Authentication authentication, @PathVariable Long gamePlayerId, @RequestBody Salvo salvo) {
+        if (isGuest(authentication)) { // there is no current user logged in
+            return new ResponseEntity<>(makeMap("error", "Please, login"), HttpStatus.UNAUTHORIZED);
+        }else{
+            Optional<GamePlayer> gamePlayerOptional = gamePlayerRepository.findById(gamePlayerId);
+            if(gamePlayerOptional.isEmpty()) { // there is no game player with the given ID
+                return new ResponseEntity<>(makeMap("error", "Not Found"), HttpStatus.NOT_FOUND);
+            }else{
+                Player player = playerRepository.findByUserName(authentication.getName());
+                // a gamePlayer variable is declared to get rid of the .get()
+                GamePlayer gamePlayer = gamePlayerOptional.get();
+                if(gamePlayer.getPlayer().getId() != player.getId()){ // the current user isn't the gamePlayer the ID references
+                    return new ResponseEntity<>(makeMap("error", "No Access"), HttpStatus.FORBIDDEN);
+                }else if (salvo.getLocations().size() != 5) {  // salvo has Turn, Player and Location
+                    return new ResponseEntity<>(makeMap("error", "You should add 5 salvoes"), HttpStatus.FORBIDDEN);
+                }else{
+                    salvo.setGamePlayer(gamePlayer);
+                    salvoRepository.save(salvo);
+                    return new ResponseEntity<>(makeMap("success", "Salvoes added"), HttpStatus.CREATED);
+                    //Otherwise, the ships should be added to the game player and saved, and a Created response should be sent.
                 }
             }
         }
