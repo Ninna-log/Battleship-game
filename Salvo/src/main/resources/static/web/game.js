@@ -10,6 +10,7 @@ var appVue = new Vue({
         authentication: null,
         showShipControls: true,
         ships: [],
+        salvoes: {"turn": 0, "locations":[]},
         shipSelected: "",
         position: "",
         row: null,
@@ -44,6 +45,26 @@ var appVue = new Vue({
                 .fail(function (error) {
                     alert(JSON.parse(error.responseText).error);
                 })
+        },
+        addingSalvoes: function(gpid){
+            appVue.turn();
+                $.post({
+                    url: "/api/games/players/"+gpid+"/salvoes",
+                    data: JSON.stringify(appVue.salvoes),
+                    dataType: "text",
+                    contentType: "application/json",
+                })
+                    .done(function (response) {
+                        alert(response);
+                        location.reload();
+                    })
+                    .fail(function (error) {
+                        alert("Failed adding Salvoes:" + error.responseText);
+                    })
+                },
+        turn: function(){
+            var playerSalvoes = appVue.gameView.salvoes.filter(salvo => salvo.player == appVue.viewer.id);
+            appVue.salvoes.turn = playerSalvoes.length + 1;
         },
         newShip: function (row, col) {
             if (appVue.shipSelected == "" || appVue.position == "") {  // if the type of ship or position hasn´t been selected

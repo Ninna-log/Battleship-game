@@ -9,9 +9,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController // It's a controller specialization in order to build an API Rest that listens to petitions and send the required petitions
 @RequestMapping("/api") // With the @RequestMapping annotation the URL rest/games is copied or Mapped to the URL /api/games // /api it´s the path where the controller is gonna be found
@@ -127,7 +129,7 @@ public class SalvoController {
         }
     }
 
-    @PostMapping("/games/players/{gamePlayerId}/salvoes")
+    @PostMapping("/games/players/{gamePlayerId}/salvos")
     public ResponseEntity<Map<String, Object>> firingSalvoes(Authentication authentication, @PathVariable Long gamePlayerId, @RequestBody Salvo salvo) {
         if (isGuest(authentication)) { // there is no current user logged in
             return new ResponseEntity<>(makeMap("error", "Please, login"), HttpStatus.UNAUTHORIZED);
@@ -139,10 +141,20 @@ public class SalvoController {
                 Player player = playerRepository.findByUserName(authentication.getName());
                 // a gamePlayer variable is declared to get rid of the .get()
                 GamePlayer gamePlayer = gamePlayerOptional.get();
+                Stream<GamePlayer> gamePlayerOptional1 = gamePlayer.getGame().getGamePlayers().stream().filter(gamePlayer1 -> gamePlayer1.getId() != gamePlayer.getId());
+
                 if(gamePlayer.getPlayer().getId() != player.getId()){ // the current user isn't the gamePlayer the ID references
                     return new ResponseEntity<>(makeMap("error", "No Access"), HttpStatus.FORBIDDEN);
                 }else if (salvo.getLocations().size() != 5) {  // salvo has Turn, Player and Location
                     return new ResponseEntity<>(makeMap("error", "You should add 5 salvoes"), HttpStatus.FORBIDDEN);
+                }else if (salvo.getTurn()-1 != gamePlayer.getSalvos().size()) {
+                    // e.g, if turn is = 1 and size is = 1, turn 1 -1 is 0, then 0 != 1 it's true, user hasn´t submitted a salvo in the same turn
+                    // otherwise, if turn is 2 and size = 1, turn 2 -1 is 1, then 1 != 1 it's false
+                    // it's only true when salvo.getTurn & gameplayer,getSalvos.size have the same numbers
+                    return new ResponseEntity<>(makeMap("error", "It's not your turn"), HttpStatus.FORBIDDEN);
+                    // A Forbidden response should be sent if the user already has submitted a salvo for the turn listed.
+                }else if(salvo.getTurn() != gamePlayerOptional1.findFirst().get().getSalvos().size()){
+                    return new ResponseEntity<>(makeMap("error", "Wait for your opponent"), HttpStatus.FORBIDDEN);
                 }else{
                     salvo.setGamePlayer(gamePlayer);
                     salvoRepository.save(salvo);

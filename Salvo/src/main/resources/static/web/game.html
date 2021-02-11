@@ -23,7 +23,6 @@
         <h1>{{ viewer != null ? viewer.player.email : '' }} vs. {{ enemy != null ? enemy.player.email : '..'}}</h1>
     </div>
     <div class="row">
-
             <div v-show="showShipControls == true" class="col modal-footer">
                 <table class="table">
                     <thead>
@@ -81,6 +80,7 @@
                 <label for="horizontal">Horizontal</label>
                     <div class="row">
                         <button @click="addingShips(viewer.gpid)">Add Ship</button>
+                        <button @click="addingSalvoes(viewer.gpid)">Add Salvoes</button>
                     </div>
                 </div>
             </div>
