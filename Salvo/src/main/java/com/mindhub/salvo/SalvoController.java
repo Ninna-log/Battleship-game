@@ -141,7 +141,7 @@ public class SalvoController {
                 Player player = playerRepository.findByUserName(authentication.getName());
                 // a gamePlayer variable is declared to get rid of the .get()
                 GamePlayer gamePlayer = gamePlayerOptional.get();
-                Stream<GamePlayer> gamePlayerOptional1 = gamePlayer.getGame().getGamePlayers().stream().filter(gamePlayer1 -> gamePlayer1.getId() != gamePlayer.getId());
+                Optional<GamePlayer> gamePlayerOptional2 = gamePlayer.getGame().getGamePlayers().stream().filter(gamePlayer1 -> gamePlayer1.getId() != gamePlayer.getId()).findFirst();
 
                 if(gamePlayer.getPlayer().getId() != player.getId()){ // the current user isn't the gamePlayer the ID references
                     return new ResponseEntity<>(makeMap("error", "No Access"), HttpStatus.FORBIDDEN);
@@ -153,8 +153,10 @@ public class SalvoController {
                     // it's only true when salvo.getTurn & gameplayer,getSalvos.size have the same numbers
                     return new ResponseEntity<>(makeMap("error", "It's not your turn"), HttpStatus.FORBIDDEN);
                     // A Forbidden response should be sent if the user already has submitted a salvo for the turn listed.
-                }else if(salvo.getTurn() != gamePlayerOptional1.findFirst().get().getSalvos().size()){
-                    return new ResponseEntity<>(makeMap("error", "Wait for your opponent"), HttpStatus.FORBIDDEN);
+                }else if(gamePlayerOptional2.isPresent() && salvo.getTurn()-1 > gamePlayerOptional2.get().getSalvos().size()) {
+                    return new ResponseEntity<>(makeMap("error", "Wait for your enemy"), HttpStatus.FORBIDDEN);
+                }else if (gamePlayerOptional2.isEmpty() && salvo.getTurn() == 1){
+                    return new ResponseEntity<>(makeMap("error", "Wait for your enemy"), HttpStatus.FORBIDDEN);
                 }else{
                     salvo.setGamePlayer(gamePlayer);
                     salvoRepository.save(salvo);

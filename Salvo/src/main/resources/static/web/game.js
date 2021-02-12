@@ -15,7 +15,9 @@ var appVue = new Vue({
         position: "",
         row: null,
         col: null,
-        cells: 0
+        cells: 0,
+        rowss: null,
+        cols: null
     },
     methods: {
         logout: function () {
@@ -47,7 +49,7 @@ var appVue = new Vue({
                 })
         },
         addingSalvoes: function(gpid){
-            appVue.turn();
+
                 $.post({
                     url: "/api/games/players/"+gpid+"/salvoes",
                     data: JSON.stringify(appVue.salvoes),
@@ -61,10 +63,29 @@ var appVue = new Vue({
                     .fail(function (error) {
                         alert("Failed adding Salvoes:" + error.responseText);
                     })
-                },
-        turn: function(){
+        },
+        newSalvoes: function(row,column){
+            appVue.rowss = row;
+            appVue.cols = column;
+
+            var index = appVue.salvoes.locations.indexOf(row + column); // indexOf() checks if row+column exists in the array salvoes
+            console.log(index);   // and, if exists, returns the index, if doesn't exist returns -1
             var playerSalvoes = appVue.gameView.salvoes.filter(salvo => salvo.player == appVue.viewer.id);
-            appVue.salvoes.turn = playerSalvoes.length + 1;
+            console.log(playerSalvoes); // filters all the salvoes that belong to the viewer
+            if(index >= 0){
+                document.getElementById("S" + row + column).classList.remove('viewerSalvoColor');
+                appVue.salvoes.locations.splice(index,1);
+            }
+            else if(playerSalvoes.findIndex(salvo => salvo.salvoLocations == row + column) != -1){
+                    alert("You already have a shot there")
+                    }
+                    else if(appVue.salvoes.locations.length < 5){
+                           document.getElementById("S" + row + column).classList.add('viewerSalvoColor');
+                           appVue.salvoes.locations.push(row + column);
+                    }
+                    else{
+                        alert("You must fire only 5 shots")
+                        }
         },
         newShip: function (row, col) {
             if (appVue.shipSelected == "" || appVue.position == "") {  // if the type of ship or position hasn´t been selected
