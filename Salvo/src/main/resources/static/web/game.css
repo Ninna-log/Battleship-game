@@ -14,8 +14,12 @@ body {
     background-color: green;
 }
 
-.viewerSalvoColor {
-    background-color: blue;
+.newViewerSalvo {
+    background-color: blue !important;
+}
+
+.oldViewerSalvo {
+    background-color: rgb(0, 247, 255);
 }
 
 .enemySalvoColor {

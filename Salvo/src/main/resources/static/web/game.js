@@ -3,6 +3,7 @@ var appVue = new Vue({
     data: {
         columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         salvo: ['S'],
+        salvoesViewer: ["s"],
         rows: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"],
         gameView: null,
         viewer: null,
@@ -10,14 +11,16 @@ var appVue = new Vue({
         authentication: null,
         showShipControls: true,
         ships: [],
-        salvoes: {"turn": 0, "locations":[]},
+        salvoes: { "turn": 0, "locations": [] },
         shipSelected: "",
         position: "",
         row: null,
         col: null,
         cells: 0,
         rowss: null,
-        cols: null
+        cols: null,
+        viewerSalvoes: [],
+        salvoesLength: null,
     },
     methods: {
         logout: function () {
@@ -41,51 +44,92 @@ var appVue = new Vue({
                 contentType: "application/json",
             })
                 .done(function (response) {
-                    alert("Ships added ");
+                    alert("Ships added");
                     location.reload()
                 })
                 .fail(function (error) {
                     alert(JSON.parse(error.responseText).error);
                 })
         },
-        addingSalvoes: function(gpid){
-
-                $.post({
-                    url: "/api/games/players/"+gpid+"/salvoes",
-                    data: JSON.stringify(appVue.salvoes),
-                    dataType: "text",
-                    contentType: "application/json",
+        addingSalvoes: function (gpid) {
+            appVue.turn();
+            $.post({
+                url: "/api/games/players/" + gpid + "/salvos",
+                data: JSON.stringify(appVue.salvoes),
+                dataType: "text",
+                contentType: "application/json",
+            })
+                .done(function (response) {
+                    alert('Salvoes added');
+                    location.reload();
                 })
-                    .done(function (response) {
-                        alert(response);
-                        location.reload();
-                    })
-                    .fail(function (error) {
-                        alert("Failed adding Salvoes:" + error.responseText);
-                    })
+                .fail(function (error) {
+                    alert(JSON.parse(error.responseText).error);
+                    location.reload();
+                })
         },
-        newSalvoes: function(row,column){
+        newSalvoes: function (row, column) {
             appVue.rowss = row;
             appVue.cols = column;
 
             var index = appVue.salvoes.locations.indexOf(row + column); // indexOf() checks if row+column exists in the array salvoes
-            console.log(index);   // and, if exists, returns the index, if doesn't exist returns -1
+                      // and, if exists, returns the index, if doesn't exist returns -1
             var playerSalvoes = appVue.gameView.salvoes.filter(salvo => salvo.player == appVue.viewer.id);
-            console.log(playerSalvoes); // filters all the salvoes that belong to the viewer
-            if(index >= 0){
-                document.getElementById("S" + row + column).classList.remove('viewerSalvoColor');
-                appVue.salvoes.locations.splice(index,1);
+                     // filters all the salvoes that belong to the viewer
+            if (index >= 0) {
+                document.getElementById("s" + row + column).classList.remove('newViewerSalvo');
+                appVue.salvoes.locations.splice(index, 1);
             }
-            else if(playerSalvoes.findIndex(salvo => salvo.salvoLocations == row + column) != -1){
-                    alert("You already have a shot there")
-                    }
-                    else if(appVue.salvoes.locations.length < 5){
-                           document.getElementById("S" + row + column).classList.add('viewerSalvoColor');
-                           appVue.salvoes.locations.push(row + column);
-                    }
-                    else{
-                        alert("You must fire only 5 shots")
+            else if (playerSalvoes.findIndex(salvo => salvo.salvoLocations == row + column) != -1) {
+                alert("You already have a shot there")
+            }
+            else if (appVue.salvoes.locations.length < 5) {
+                document.getElementById('s' + row + column).classList.add('newViewerSalvo');
+                appVue.salvoes.locations.push(row + column);
+            }
+            else {
+                alert("You must fire only 5 shots")
+            }
+        },
+        turn: function () {
+            var playerSalvoes = appVue.gameView.salvoes.filter(salvo => salvo.player == appVue.viewer.id);
+            appVue.salvoes.turn = playerSalvoes.length + 1;
+        },
+        drawingSalvoes: function () {
+            var salvoes = [];
+            for (var i = 0; i < appVue.gameView.salvoes.length; i++) {
+                for (var t = 0; t < appVue.gameView.salvoes[i].location.length; t++) {
+                    if (appVue.gameView.salvoes[i].player != appVue.viewer.id) {        //enemy
+                        if (appVue.shipsHit(appVue.gameView.salvoes[i].location[t])) {
+                            document.getElementById(appVue.gameView.salvoes[i].location[t]).classList.add('hits');
+                            document.getElementById(appVue.gameView.salvoes[i].location[t]).innerHTML = appVue.gameView.salvoes[i].turn;
                         }
+                        else {
+                            document.getElementById(appVue.gameView.salvoes[i].location[t]).classList.add('enemySalvoColor');
+                        }
+                    }
+                    else {
+                        salvoes.push(appVue.gameView.salvoes[i].location[t]);   // viewer
+                        document.getElementById('s' + appVue.gameView.salvoes[i].location[t]).classList.add('oldViewerSalvo');
+                        document.getElementById("s" + appVue.gameView.salvoes[i].location[t]).innerHTML = appVue.gameView.salvoes[i].turn;
+                    }
+                }
+            }
+            var newSalvoes = salvoes.slice(1).slice(-5);
+            newSalvoes.forEach((salvo) => {
+              document.getElementById('s' + salvo).classList.add('newViewerSalvo');
+            });
+        },
+        shipsHit: function (location) {
+            var hit = false;
+            for (var y = 0; y < appVue.gameView.ships.length; y++) {
+                for (var q = 0; q < appVue.gameView.ships[y].location.length; q++) {
+                    if (location == appVue.gameView.ships[y].location[q]) {
+                        hit = true;
+                    }
+                }
+            }
+            return hit;
         },
         newShip: function (row, col) {
             if (appVue.shipSelected == "" || appVue.position == "") {  // if the type of ship or position hasn´t been selected
@@ -99,28 +143,28 @@ var appVue = new Vue({
                 if (appVue.ships.findIndex(ship => ship.type === appVue.shipSelected) != -1) {
                     appVue.eraseShips();
                     appVue.drawShips();
-                }else if (appVue.ships.findIndex(ship => ship.type === appVue.shipSelected) == -1) {
+                } else if (appVue.ships.findIndex(ship => ship.type === appVue.shipSelected) == -1) {
                     appVue.drawShips();  // otherwise, if findIndex() returns -1, the ship wasn't found
                 }
             }
         },
         shipsTypes: function () {
-            switch (appVue.shipSelected){
-            case "Carrier":
-                appVue.cells = 5;
-                break;
-            case "Battleship":
-                appVue.cells = 4;
-                break;
-            case "Submarine":
-                appVue.cells = 3;
-                break;
-            case "Destroyer":
-                appVue.cells = 3;
-                break;
-            case "Patroal Boat":
-                appVue.cells = 2;
-                break;
+            switch (appVue.shipSelected) {
+                case "Carrier":
+                    appVue.cells = 5;
+                    break;
+                case "Battleship":
+                    appVue.cells = 4;
+                    break;
+                case "Submarine":
+                    appVue.cells = 3;
+                    break;
+                case "Destroyer":
+                    appVue.cells = 3;
+                    break;
+                case "Patroal Boat":
+                    appVue.cells = 2;
+                    break;
             }
         },
         eraseShips: function () {
@@ -130,7 +174,7 @@ var appVue = new Vue({
                 for (var i = 0; i < appVue.ships[loc].locations.length; i++) {
                     document.getElementById(appVue.ships[loc].locations[i]).classList.remove('shipColor'); // in order to remove that color class
                 }
-                appVue.ships.splice(loc,1); // eliminates all the elements given by loc which is where findIndex() found the same ship
+                appVue.ships.splice(loc, 1); // eliminates all the elements given by loc which is where findIndex() found the same ship
             }
             var index = appVue.rows.indexOf(appVue.row);
             if (appVue.position == "vertical" && ((index + 1) + appVue.cells <= 11)) { // if it's vertical
@@ -138,7 +182,7 @@ var appVue = new Vue({
                 for (var i = 0; i < appVue.ships[loc].locations.length; i++) {
                     document.getElementById(appVue.ships[loc].locations[i]).classList.remove('shipColor');
                 }
-                appVue.ships.splice(loc,1);
+                appVue.ships.splice(loc, 1);
             }
         },
         drawShips: function () {
@@ -194,30 +238,6 @@ var appVue = new Vue({
                 }
             }
         },
-        drawingSalvoes: function () {
-            for (var i = 0; i < appVue.gameView.salvoes.length; i++) {
-                if (appVue.gameView.salvoes[i].player == appVue.gameView.id) {
-                    for (var x = 0; x < appVue.gameView.salvoes[i].location.length; x++) {
-                        document.getElementById("S" + appVue.gameView.salvoes[i].location[x]).classList.add('viewerSalvoColor');
-                        document.getElementById("S" + appVue.gameView.salvoes[i].location[x]).innerHTML = appVue.gameView.salvoes[i].turn;
-                    }
-                } else {
-                    for (var x = 0; x < appVue.gameView.salvoes[i].location.length; x++) {
-                        for (var y = 0; y < appVue.gameView.ships.length; y++) {
-                            for (var z = 0; z < appVue.gameView.ships[y].location.length; z++) {
-                                if (appVue.gameView.ships[y].location[z] == appVue.gameView.salvoes[i].location[x]) {
-                                    document.getElementById(appVue.gameView.salvoes[i].location[x]).classList.add('hits');
-                                }
-                                else {
-                                    document.getElementById(appVue.gameView.salvoes[i].location[x]).classList.add('enemySalvoColor');
-                                }
-                            }
-                        }
-                        document.getElementById(appVue.gameView.salvoes[i].location[x]).innerHTML = appVue.gameView.salvoes[i].turn;
-                    }
-                }
-            }
-        },
         players: function () {
             for (var j = 0; j < appVue.gameView.gamePlayers.length; j++) {
                 if (appVue.gameView.gamePlayers[j].gpid == appVue.gameView.id) {
@@ -229,7 +249,6 @@ var appVue = new Vue({
         },
         shipControls: function () {
             appVue.showShipControls = appVue.gameView != null && appVue.gameView.ships.length != 5;
-            console.log(appVue.showShipControls);
         }
     }
 });
@@ -249,9 +268,10 @@ fetch('/api/game_view/' + gp)
     .then(function (json) {
         appVue.gameView = json;
         appVue.authentication = json.player;
+        appVue.players();
         appVue.drawingShips();
         appVue.drawingSalvoes();
-        appVue.players();
+        appVue.shipsHit();
         appVue.shipControls();
     })
 
