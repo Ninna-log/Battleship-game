@@ -9,7 +9,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Id;
 import javax.persistence.FetchType;
 import javax.persistence.*;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Salvo {
@@ -64,5 +65,53 @@ public class Salvo {
 
     public void setLocations(List<String> locations) {
         this.locations = locations;
+    }
+
+    public List<String> getHits() {
+
+        Optional<GamePlayer> enemy = this.gamePlayer.getEnemy();
+
+        if(enemy.isPresent()){
+
+            List<String> viewerLocations = this.locations;
+            List<String> enemyLocations = new ArrayList<>();
+            Set<Ship> enemyShips = enemy.get().getShips();
+
+            enemyShips.forEach(ship -> enemyLocations.addAll(ship.getLocations()));
+
+            return viewerLocations.stream().filter(enemyLocations::contains)
+                    .collect(Collectors.toList());
+        }
+        else{
+            return new ArrayList<>();
+        }
+    }
+
+    public List<Ship> getSunkenShips() {
+        Optional<GamePlayer> enemy = this.gamePlayer.getEnemy();
+
+        if(enemy.isPresent()){
+            List<String> allShots = new ArrayList<>();
+
+            Set<Salvo> viewerSalvoes = this.gamePlayer.getSalvos().stream()
+                    .filter(salvo -> salvo.getTurn() <= this.turn).collect(Collectors.toSet());
+
+            Set<Ship> enemyShips = enemy.get().getShips();
+
+            viewerSalvoes.forEach(salvo -> allShots.addAll(salvo.getLocations()));
+
+            return enemyShips.stream().filter(ship -> allShots.containsAll(ship.getLocations()))
+                    .collect(Collectors.toList());
+        }
+        else{
+            return new ArrayList<>();
+        }
+    }
+
+    public Map<String, Object> sunkenDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("turn", this.turn);
+        dto.put("sunken", this.getSunkenShips().stream().map(Ship::shipDTO));
+        return dto;
     }
 }

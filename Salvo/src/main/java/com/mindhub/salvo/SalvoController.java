@@ -210,6 +210,8 @@ public class SalvoController {
         dto.put("gamePlayers", gamePlayer.getGame().getGamePlayers().stream().map(gamePlayer1 -> makeGamePlayerDTO(gamePlayer1)).collect(Collectors.toList()));
         dto.put("ships", gamePlayer.getShips().stream().map(ship -> makeShipDTO(ship)).collect(Collectors.toList()));
         dto.put("salvoes", gamePlayer.getGame().getGamePlayers().stream().flatMap(gamePlayer1 -> gamePlayer1.getSalvos().stream()).map(salvo -> makeSalvoDTO(salvo)).collect(Collectors.toList()));
+        dto.put("hits", gamePlayer.getSalvos().stream().map(Salvo::getHits));
+        dto.put("sunken", gamePlayer.getSalvos().stream().map(Salvo::sunkenDTO));
         return dto;
     }
 
@@ -250,6 +252,13 @@ public class SalvoController {
         dto.put("turn", salvo.getTurn());
         dto.put("player", salvo.getGamePlayer().getPlayer().getId());
         dto.put("location", salvo.getLocations());
+        return dto;
+    }
+
+    private Map<String, Object> salvoHitDTO(Salvo salvo) {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("turn", salvo.getTurn());
+        dto.put("hits", salvo.getHits());
         return dto;
     }
 }

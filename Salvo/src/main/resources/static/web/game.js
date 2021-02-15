@@ -18,9 +18,7 @@ var appVue = new Vue({
         col: null,
         cells: 0,
         rowss: null,
-        cols: null,
-        viewerSalvoes: [],
-        salvoesLength: null,
+        cols: null
     },
     methods: {
         logout: function () {
@@ -115,7 +113,7 @@ var appVue = new Vue({
                     }
                 }
             }
-            var newSalvoes = salvoes.slice(1).slice(-5);
+            var newSalvoes = salvoes.slice(0).slice(-5);
             newSalvoes.forEach((salvo) => {
               document.getElementById('s' + salvo).classList.add('newViewerSalvo');
             });

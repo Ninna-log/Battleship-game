@@ -99,4 +99,11 @@ public class GamePlayer {
         salvo.setGamePlayer(this);
         salvos.add(salvo);
     }
+
+    public Optional<GamePlayer> getEnemy(){
+        return this.game.getGamePlayers()
+                .stream()
+                .filter(gp -> gp.getId() != this.id)
+                .findFirst();
+    }
 }
