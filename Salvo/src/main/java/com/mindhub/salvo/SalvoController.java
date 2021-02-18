@@ -210,8 +210,18 @@ public class SalvoController {
         dto.put("gamePlayers", gamePlayer.getGame().getGamePlayers().stream().map(gamePlayer1 -> makeGamePlayerDTO(gamePlayer1)).collect(Collectors.toList()));
         dto.put("ships", gamePlayer.getShips().stream().map(ship -> makeShipDTO(ship)).collect(Collectors.toList()));
         dto.put("salvoes", gamePlayer.getGame().getGamePlayers().stream().flatMap(gamePlayer1 -> gamePlayer1.getSalvos().stream()).map(salvo -> makeSalvoDTO(salvo)).collect(Collectors.toList()));
-        dto.put("hits", gamePlayer.getSalvos().stream().map(Salvo::getHits));
-        dto.put("sunken", gamePlayer.getSalvos().stream().map(Salvo::sunkenDTO));
+        dto.put("hits", gamePlayer.getSalvos().stream().map(Salvo::hitsDTO));
+        dto.put("sinks", gamePlayer.getSalvos().stream().map(Salvo::sunkenDTO));
+
+        Optional<GamePlayer> enemy = gamePlayer.getEnemy();
+
+        if(enemy.isPresent()) {
+            dto.put("enemyHits", enemy.get().getSalvos().stream().map(Salvo::salvoHitDTO));
+            dto.put("enemySunken", enemy.get().getSalvos().stream().map(Salvo::salvoSunkenDTO));
+        } else {
+            dto.put("enemyHits", new ArrayList<>());
+            dto.put("enemySunken", new ArrayList<>());
+        }
         return dto;
     }
 

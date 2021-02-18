@@ -107,15 +107,15 @@ var appVue = new Vue({
                         }
                     }
                     else {
-                        salvoes.push(appVue.gameView.salvoes[i].location[t]);   // viewer
+                        salvoes.push(appVue.gameView.salvoes[i]);   // viewer
                         document.getElementById('s' + appVue.gameView.salvoes[i].location[t]).classList.add('oldViewerSalvo');
                         document.getElementById("s" + appVue.gameView.salvoes[i].location[t]).innerHTML = appVue.gameView.salvoes[i].turn;
                     }
                 }
             }
-            var newSalvoes = salvoes.slice(0).slice(-5);
-            newSalvoes.forEach((salvo) => {
-              document.getElementById('s' + salvo).classList.add('newViewerSalvo');
+            var newSalvoes = salvoes.sort((a,b) => parseInt(b.turn) - parseInt(a.turn))[0];
+            newSalvoes.location.forEach((salvo) => {
+                          document.getElementById('s' + salvo).classList.add('newViewerSalvo');
             });
         },
         shipsHit: function (location) {

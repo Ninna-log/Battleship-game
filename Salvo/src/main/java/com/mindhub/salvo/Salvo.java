@@ -67,15 +67,15 @@ public class Salvo {
         this.locations = locations;
     }
 
-    public List<String> getHits() {
+    public List<String> getHits() {  // viewer
 
-        Optional<GamePlayer> enemy = this.gamePlayer.getEnemy();
+        Optional<GamePlayer> enemy = this.gamePlayer.getEnemy(); // getEnemy() is defined in gamePlayer
+        // Optional, can be present or non-present
+        if(enemy.isPresent()){ // if enemy is present
 
-        if(enemy.isPresent()){
-
-            List<String> viewerLocations = this.locations;
+            List<String> viewerLocations = this.locations; // viewer locations
             List<String> enemyLocations = new ArrayList<>();
-            Set<Ship> enemyShips = enemy.get().getShips();
+            Set<Ship> enemyShips = enemy.get().getShips(); // enemy locations
 
             enemyShips.forEach(ship -> enemyLocations.addAll(ship.getLocations()));
 
@@ -87,7 +87,7 @@ public class Salvo {
         }
     }
 
-    public List<Ship> getSunkenShips() {
+    public List<Ship> getSunkenShips() {  // enemy
         Optional<GamePlayer> enemy = this.gamePlayer.getEnemy();
 
         if(enemy.isPresent()){
@@ -108,8 +108,31 @@ public class Salvo {
         }
     }
 
+    public Map<String, Object> hitsDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("turn", this.turn);
+        dto.put("hits", this.getHits());
+        return dto;
+    }
+
     public Map<String, Object> sunkenDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("turn", this.turn);
+        dto.put("sunken", this.getSunkenShips().stream().map(Ship::shipDTO));
+        return dto;
+    }
+
+    public Map<String, Object> salvoHitDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("turn", this.turn);
+        dto.put("hits", this.getHits());
+        return dto;
+    }
+
+    public Map<String, Object> salvoSunkenDTO() {
+
+        Map<String, Object> dto = new LinkedHashMap<>();
+
         dto.put("turn", this.turn);
         dto.put("sunken", this.getSunkenShips().stream().map(Ship::shipDTO));
         return dto;
