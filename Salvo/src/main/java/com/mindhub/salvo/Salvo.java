@@ -68,13 +68,6 @@ public class Salvo {
     }
 
 
-    public Map<String, Object> salvoHitDTO() {
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("turn", this.turn);
-        dto.put("hits", this.getHits());
-        return dto;
-    }
-
     public Map<String, Object> sunkenDTO() {
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("turn", this.turn);

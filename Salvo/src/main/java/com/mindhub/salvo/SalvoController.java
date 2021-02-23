@@ -216,7 +216,7 @@ public class SalvoController {
         Optional<GamePlayer> enemy = gamePlayer.getEnemy();
 
         if(enemy.isPresent()) {
-            dto.put("enemyHits", enemy.get().getSalvos().stream().map(Salvo::salvoHitDTO));
+            dto.put("enemyHits", enemy.get().getSalvos().stream().map(Salvo::hitsDTO));
             dto.put("enemySunken", enemy.get().getSalvos().stream().map(Salvo::salvoSunkenDTO));
         } else {
             dto.put("enemyHits", new ArrayList<>());
@@ -262,13 +262,6 @@ public class SalvoController {
         dto.put("turn", salvo.getTurn());
         dto.put("player", salvo.getGamePlayer().getPlayer().getId());
         dto.put("location", salvo.getLocations());
-        return dto;
-    }
-
-    private Map<String, Object> salvoHitDTO(Salvo salvo) {
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("turn", salvo.getTurn());
-        dto.put("hits", salvo.getHits());
         return dto;
     }
 }

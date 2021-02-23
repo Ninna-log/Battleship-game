@@ -2,31 +2,45 @@
 <html xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-model="http://www.w3.org/1999/xhtml"
       xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="/web/games.css">
 </head>
 <body background="/web/img/fondo.webp">
 <div id="app">
+
 <div>
     <div>
-        <form v-show="authentication == null">
-            <label>Username: <input type="text" v-model:value="username"></label>
-            <label>Password: <input type="password" v-model:value="password"></label>
-            <button type="button" v-on:click="login">SignIn</button>
-            <button v-show="authentication == null" type="button" v-on:click="register">Register</button>
-        </form>
-        <div v-if="authentication != null">
-             <h2>{{authentication.email}}</h2>
+        <div class="row pt-3" v-show="authentication == null" id="userNonAuthenticated">
+            <div class="col-4">
+                 <input type="text" placeholder="name@example.com" v-model:value="username">
+                 <input type="password" placeholder="password" v-model:value="password">
+            </div>
+            <div class="col">
+                 <button type="button" class="btn btn-warning" v-on:click="login" onclick="this.blur();">Login</button>
+                 <button type="button" class="btn btn-warning" v-show="authentication == null" v-on:click="register" onclick="this.blur();">SignUp</button>
+            </div>
         </div>
-        <button v-show="authentication != null" type="button" v-on:click="createGame">Create a Game</button>
-        <button v-show="authentication != null" type="button" v-on:click="logout">SignOut</button>
+        <h1 v-show="authentication == null">Salvo!</h1>
+
+        <div class="row pt-3 justify-content-between" v-if="authentication != null" id="userAuthenticated">
+             <div class="col-10">
+                 <h2>{{authentication.email}}</h2>
+             </div>
+             <div class="col">
+                 <button type="button" class="btn btn-warning" v-show="authentication != null" v-on:click="createGame">Create a Game</button>
+                 <button type="button" class="btn btn-warning" v-show="authentication != null" v-on:click="logout">Sign Out</button>
+             </div>
+        </div>
     </div>
-    <h1>Salvo!</h1>
+
     <ul>
         <li v-for='game in games'>
             Date: {{game.date|dateFormatted}}
-            <button v-if="authentication != null && game.players[0].player.id == authentication.id"><a v-bind:href="'http://localhost:8080/web/game.html?gp='+ game.players[0].gpid">Link to the game</a></button>
-            <button v-else-if="authentication != null && (game.players[1] != null && game.players[1].player.id) == authentication.id"><a v-bind:href="'http://localhost:8080/web/game.html?gp='+ game.players[1].gpid">Link to the game</a></button>
-            <button v-if="authentication != null && game.players.length != 2 && game.players[0].player.id != authentication.id" type="button" v-on:click="joinGame(game.id)">Join Game</button>
+            <button type="button" class="btn btn-warning" v-if="authentication != null && game.players[0].player.id == authentication.id"><a v-bind:href="'http://localhost:8080/web/game.html?gp='+ game.players[0].gpid">Enter</a></button>
+            <button type="button" class="btn btn-warning" v-else-if="authentication != null && (game.players[1] != null && game.players[1].player.id) == authentication.id"><a v-bind:href="'http://localhost:8080/web/game.html?gp='+ game.players[1].gpid">Enter</a></button>
+            <button type="button" class="btn btn-warning" v-if="authentication != null && game.players.length != 2 && game.players[0].player.id != authentication.id" v-on:click="joinGame(game.id)">Join</button>
             <ol>
                 <li v-for='player in game.players'>
                     Email: {{player.player.email}}

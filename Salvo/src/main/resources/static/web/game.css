@@ -5,6 +5,7 @@
 }
 
 body {
+    background-image: url("/web/img/fondo3.jpg");
     display: flex;
     align-items: start;
     justify-content: center;
@@ -25,7 +26,8 @@ body::-webkit-scrollbar-thumb {
     background: #37483e;
 }
 
-video {
+/**video {
+    background-image: url("/web/img/fondo2.jpg");
     min-width: 100%;
     min-height: 100%;
     position: fixed;
@@ -33,6 +35,16 @@ video {
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
     z-index: -1;
+}**/
+
+h1 {
+    color: #c5ce17;
+}
+
+.fa-arrow-alt-circle-left {
+    color: #c5ce17;
+    font-size: 30px;
+    cursor: pointer;
 }
 
 #players h1 {

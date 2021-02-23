@@ -2,16 +2,11 @@
 
 * {
     box-sizing: border-box;
-    color: #c5ce17;
-    font-family: 'Lato', sans-serif;
 }
 
 body {
-    display: flex;
-    align-items: start;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
+    color: rgb(194, 187, 93);
+    font-family: 'Lato', sans-serif;
 }
 
 body::-webkit-scrollbar {
@@ -27,7 +22,25 @@ body::-webkit-scrollbar-thumb {
     background: #37483e;
 }
 
+#userNonAuthenticated {
+    padding-left: 1rem;
+}
+
+#userAuthenticated {
+    padding-left: 2rem;
+}
+
+input::placeholder {
+    color: rgb(86, 97, 86);
+}
+
 .table table {
     width: 450px;
     height: 200px;
+    color: rgb(194, 187, 93);
+}
+
+.btn-warning a {
+    text-decoration: none;
+    color: rgb(86, 97, 86);
 }
