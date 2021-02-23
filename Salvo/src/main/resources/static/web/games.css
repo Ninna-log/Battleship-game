@@ -1,3 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap');
+
+* {
+    box-sizing: border-box;
+    color: #c5ce17;
+    font-family: 'Lato', sans-serif;
+}
+
+body {
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+body::-webkit-scrollbar {
+    width: 0.25rem;
+    height: 0.25rem;
+}
+
+body::-webkit-scrollbar-track {
+    background: rgb(35, 35, 35);
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #37483e;
+}
+
 .table table {
     width: 450px;
     height: 200px;

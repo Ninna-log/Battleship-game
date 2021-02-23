@@ -94,11 +94,10 @@ var appVue = new Vue({
             appVue.salvoes.turn = playerSalvoes.length + 1;
         },
         drawingSalvoes: function () {
-            var salvoes = [];
             for (var i = 0; i < appVue.gameView.salvoes.length; i++) {
                 for (var t = 0; t < appVue.gameView.salvoes[i].location.length; t++) {
-                    if (appVue.gameView.salvoes[i].player != appVue.viewer.id) {        //enemy
-                        if (appVue.shipsHit(appVue.gameView.salvoes[i].location[t])) {
+                    if (appVue.gameView.salvoes[i].player != appVue.viewer.id) {  // salvo's enemy
+                        if (appVue.shipsHitsByEnemy(appVue.gameView.salvoes[i].location[t])) {
                             document.getElementById(appVue.gameView.salvoes[i].location[t]).classList.add('hits');
                             document.getElementById(appVue.gameView.salvoes[i].location[t]).innerHTML = appVue.gameView.salvoes[i].turn;
                         }
@@ -107,22 +106,32 @@ var appVue = new Vue({
                         }
                     }
                     else {
-                        salvoes.push(appVue.gameView.salvoes[i]);   // viewer
+                        if(appVue.shipsHitsByViewer(appVue.gameView.salvoes[i].location[t])){ // salvo's viewer
+                            document.getElementById('s' + appVue.gameView.salvoes[i].location[t]).classList.add('hits');
+                        }else{
                         document.getElementById('s' + appVue.gameView.salvoes[i].location[t]).classList.add('oldViewerSalvo');
                         document.getElementById("s" + appVue.gameView.salvoes[i].location[t]).innerHTML = appVue.gameView.salvoes[i].turn;
+                        }
                     }
                 }
             }
-            var newSalvoes = salvoes.sort((a,b) => parseInt(b.turn) - parseInt(a.turn))[0];
-            newSalvoes.location.forEach((salvo) => {
-                          document.getElementById('s' + salvo).classList.add('newViewerSalvo');
-            });
         },
-        shipsHit: function (location) {
+        shipsHitsByViewer: function (location2) {
+            var hit = false;
+            for (var y = 0; y < appVue.gameView.hits.length; y++) {
+                for (var q = 0; q < appVue.gameView.hits[y].hits.length; q++) { // viewer's hits
+                    if (location2 == appVue.gameView.hits[y].hits[q]) {
+                        hit = true;
+                    }
+                }
+            }
+            return hit;
+        },
+        shipsHitsByEnemy: function (location1) {
             var hit = false;
             for (var y = 0; y < appVue.gameView.ships.length; y++) {
-                for (var q = 0; q < appVue.gameView.ships[y].location.length; q++) {
-                    if (location == appVue.gameView.ships[y].location[q]) {
+                for (var q = 0; q < appVue.gameView.ships[y].location.length; q++) { // viewer's ships
+                    if (location1 == appVue.gameView.ships[y].location[q]) {
                         hit = true;
                     }
                 }
@@ -269,7 +278,8 @@ fetch('/api/game_view/' + gp)
         appVue.players();
         appVue.drawingShips();
         appVue.drawingSalvoes();
-        appVue.shipsHit();
+        appVue.shipsHitsByViewer();
+        appVue.shipsHitsByEnemy();
         appVue.shipControls();
     })
 

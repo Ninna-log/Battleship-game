@@ -102,6 +102,6 @@ public class GamePlayer {
 
     public Optional<GamePlayer> getEnemy(){
         return this.game.getGamePlayers().stream().filter(gp -> gp.getId() != this.id).findFirst();
-        // returns the gamePlayer which is different from from the gamePlayer viewer
+        // returns the gamePlayer which is different from the gamePlayer viewer
     }
 }

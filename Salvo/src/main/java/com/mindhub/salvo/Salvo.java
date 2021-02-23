@@ -67,6 +67,28 @@ public class Salvo {
         this.locations = locations;
     }
 
+
+    public Map<String, Object> salvoHitDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("turn", this.turn);
+        dto.put("hits", this.getHits());
+        return dto;
+    }
+
+    public Map<String, Object> sunkenDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("turn", this.turn);
+        dto.put("sunken", this.getSunkenShips().stream().map(Ship::shipDTO));
+        return dto;
+    }
+
+    public Map<String, Object> hitsDTO() {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("turn", this.turn);
+        dto.put("hits", this.getHits());
+        return dto;
+    }
+
     public List<String> getHits() {  // viewer
 
         Optional<GamePlayer> enemy = this.gamePlayer.getEnemy(); // getEnemy() is defined in gamePlayer
@@ -106,27 +128,6 @@ public class Salvo {
         else{
             return new ArrayList<>();
         }
-    }
-
-    public Map<String, Object> hitsDTO() {
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("turn", this.turn);
-        dto.put("hits", this.getHits());
-        return dto;
-    }
-
-    public Map<String, Object> sunkenDTO() {
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("turn", this.turn);
-        dto.put("sunken", this.getSunkenShips().stream().map(Ship::shipDTO));
-        return dto;
-    }
-
-    public Map<String, Object> salvoHitDTO() {
-        Map<String, Object> dto = new LinkedHashMap<>();
-        dto.put("turn", this.turn);
-        dto.put("hits", this.getHits());
-        return dto;
     }
 
     public Map<String, Object> salvoSunkenDTO() {

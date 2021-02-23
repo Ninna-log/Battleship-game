@@ -8,6 +8,35 @@ body {
     display: flex;
     align-items: start;
     justify-content: center;
+    margin: 0;
+    padding: 0;
+}
+
+body::-webkit-scrollbar {
+    width: 0.25rem;
+    height: 0.25rem;
+}
+
+body::-webkit-scrollbar-track {
+    background: rgb(35, 35, 35);
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #37483e;
+}
+
+video {
+    min-width: 100%;
+    min-height: 100%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: -1;
+}
+
+#players h1 {
+    font-size: 30px;
 }
 
 .shipColor{
