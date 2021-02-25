@@ -1,11 +1,11 @@
 package com.mindhub.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.http.ResponseEntity;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class GamePlayer {
@@ -104,4 +104,26 @@ public class GamePlayer {
         return this.game.getGamePlayers().stream().filter(gp -> gp.getId() != this.id).findFirst();
         // returns the gamePlayer which is different from the gamePlayer viewer
     }
+
+
+    public ResponseEntity<Map<String, Object>> gameStateManagement(){
+
+        //A player can't place ships more than once <-- QUE EL PLAYER NO PUEDA AGREGAR MAS NAVES EN TURNOS ANTERIORES?
+        //A player can't fire a salvo more than once per turn <-- LO TENGO
+        //A player can't fire a salvo for a previous turn <-- RESTRINGIR EN ADDINGSALVOS? VER SI EL TURNO DONDE EL PLAYER QUIERE DISPARAR YA TIENE SALVOS
+        //A player can't fire a salvo after the game has ended
+        //A player can't fire a salvo with more than 5 shots
+
+        // A tie is possible if both players sink each others ships in the same round.
+        // When the game ends, the controller should update the game score database
+        // 1 point for a win, half a point for a tie, 0 for losing
+
+
+        // COMO OBTENER EL ULTIMO TURNO
+        Optional<GamePlayer> enemy = this.getEnemy();
+        Optional<Salvo> salvo2 = this.getSalvos().stream().filter(salvo1 -> salvo1.getTurn() == this.getSalvos().size()).findFirst();
+        this.getSalvos().stream().forEach(this.get);
+        if(salvo2.get().getTurn() > this.getSalvos().)
+
+
 }
