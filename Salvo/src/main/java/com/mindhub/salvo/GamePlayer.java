@@ -1,6 +1,7 @@
 package com.mindhub.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import javax.persistence.*;
@@ -106,24 +107,33 @@ public class GamePlayer {
     }
 
 
-    public ResponseEntity<Map<String, Object>> gameStateManagement(){
+    public String gameStateManagement(){
 
-        //A player can't place ships more than once <-- QUE EL PLAYER NO PUEDA AGREGAR MAS NAVES EN TURNOS ANTERIORES?
-        //A player can't fire a salvo more than once per turn <-- LO TENGO
-        //A player can't fire a salvo for a previous turn <-- RESTRINGIR EN ADDINGSALVOS? VER SI EL TURNO DONDE EL PLAYER QUIERE DISPARAR YA TIENE SALVOS
         //A player can't fire a salvo after the game has ended
-        //A player can't fire a salvo with more than 5 shots
-
         // A tie is possible if both players sink each others ships in the same round.
         // When the game ends, the controller should update the game score database
         // 1 point for a win, half a point for a tie, 0 for losing
 
-
-        // COMO OBTENER EL ULTIMO TURNO
         Optional<GamePlayer> enemy = this.getEnemy();
-        Optional<Salvo> salvo2 = this.getSalvos().stream().filter(salvo1 -> salvo1.getTurn() == this.getSalvos().size()).findFirst();
-        this.getSalvos().stream().forEach(this.get);
-        if(salvo2.get().getTurn() > this.getSalvos().)
+        if(this.getShips().isEmpty() && enemy.isPresent()){ // if viewer hasn't placed any ship and enemy exists
+            return "Place Ships";
+        }else if(enemy.isEmpty()){ // if enemy doesn't exists yet
+            return "Wait for your enemy";
+        }else {  // begins to validate other stages
+            if (this.getShips().size() == 5 && enemy.get().getShips().size() == 5){ // after they have placed their ships, they can fire
+                return "You can fire salvoes now";
+            }else{
+                return "You can't fire now";
+            }
+        }else{  // salvos porque se quiere recorrer el arreglo de salvos, y getSalvos() porque se quiere obtener el size directamente
+            Optional<Salvo> gpTurn = this.salvos.stream().filter(salvo -> salvo.getTurn() == this.getSalvos().size()).findFirst();
+            Optional<Salvo> enemyTurn = enemy.get().salvos.stream().filter(salvo -> salvo.getTurn() == enemy.get().getSalvos().size()).findFirst();
+            if (gpTurn.isPresent()){
+
+            }else if(enemyTurn.isPresent()){
+
+            }
+        }
 
 
 }
