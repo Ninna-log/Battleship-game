@@ -1,9 +1,6 @@
 package com.mindhub.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -19,20 +16,24 @@ public class GamePlayer {
     private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.EAGER) // relation of Many(GamePlayer) to Many(Player)
-    @JoinColumn(name="player_id") // Player is identified by a unique player ID in a column in the GamePlayerRepository
+    @JoinColumn(name = "player_id")
+    // Player is identified by a unique player ID in a column in the GamePlayerRepository
     private Player player;                      // GamePlayer class will be receiving two objects: Player and Game
 
     @ManyToOne(fetch = FetchType.EAGER) // relation of Many(GamePlayer) to Many(Game)
-    @JoinColumn(name="game_id") // Game is identified by a unique game ID in a column in the GamePlayerRepository
+    @JoinColumn(name = "game_id") // Game is identified by a unique game ID in a column in the GamePlayerRepository
     private Game game;
 
-    @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER, cascade = CascadeType.ALL) // relation que hay con Ship a través de la propiedad "gamePlayer"
+    @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    // relation que hay con Ship a través de la propiedad "gamePlayer"
     private Set<Ship> ships = new HashSet<>();
 
-    @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER, cascade = CascadeType.ALL) // relation que hay con Salvo a través de la propiedad "gamePlayer"
+    @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    // relation que hay con Salvo a través de la propiedad "gamePlayer"
     private Set<Salvo> salvos = new HashSet<>();
 
-    public GamePlayer() { } // empty constructor
+    public GamePlayer() {
+    } // empty constructor
 
     public GamePlayer(Player player, Game game, LocalDateTime date) {
         this.player = player;    // Non-empty constructor which will be receiving when the GamePlayer object is created
@@ -101,13 +102,13 @@ public class GamePlayer {
         salvos.add(salvo);
     }
 
-    public Optional<GamePlayer> getEnemy(){
+    public Optional<GamePlayer> getEnemy() {
         return this.game.getGamePlayers().stream().filter(gp -> gp.getId() != this.id).findFirst();
         // returns the gamePlayer which is different from the gamePlayer viewer
     }
 
 
-    public String gameStateManagement(){
+    public String gameStateManagement() {
 
         //A player can't fire a salvo after the game has ended
         // A tie is possible if both players sink each others ships in the same round.
@@ -115,25 +116,45 @@ public class GamePlayer {
         // 1 point for a win, half a point for a tie, 0 for losing
 
         Optional<GamePlayer> enemy = this.getEnemy();
-        if(this.getShips().isEmpty() && enemy.isPresent()){ // if viewer hasn't placed any ship and enemy exists
+        if (this.getShips().isEmpty() && enemy.isPresent()) { // if viewer hasn't placed any ship and enemy exists
             return "Place Ships";
-        }else if(enemy.isEmpty()){ // if enemy doesn't exists yet
+        } else if (enemy.isEmpty()) { // if enemy doesn't exists yet
             return "Wait for your enemy";
-        }else {  // begins to validate other stages
-            if (this.getShips().size() == 5 && enemy.get().getShips().size() == 5){ // after they have placed their ships, they can fire
-                return "You can fire salvoes now";
-            }else{
-                return "You can't fire now";
-            }
-        }else{  // salvos porque se quiere recorrer el arreglo de salvos, y getSalvos() porque se quiere obtener el size directamente
-            Optional<Salvo> gpTurn = this.salvos.stream().filter(salvo -> salvo.getTurn() == this.getSalvos().size()).findFirst();
+        } else {  // salvos porque se quiere recorrer el arreglo de salvos, y getSalvos() porque se quiere obtener el size directamente
+            int turnViewer = 0;
+            int sunksViewer = 0;
+            int turnEnemy = 0;
+            int sunksEnemy = 0;
+            Optional<Salvo> gpTurn = this.salvos.stream().filter(salvo -> salvo.getTurn() == this.getSalvos().size()).findFirst(); // last turn played
             Optional<Salvo> enemyTurn = enemy.get().salvos.stream().filter(salvo -> salvo.getTurn() == enemy.get().getSalvos().size()).findFirst();
-            if (gpTurn.isPresent()){
 
-            }else if(enemyTurn.isPresent()){
+            if (gpTurn.isPresent()) { // vieweeerrr
+                turnViewer = gpTurn.get().getTurn(); // gets last turn played by the viewer
+                sunksViewer = gpTurn.get().getSunkenShips().size(); // gets sunken ships from the last turn
+            } else if (enemyTurn.isPresent()) {
+                turnEnemy = enemyTurn.get().getTurn(); // gets last turn played by the enemy
+                sunksEnemy = enemyTurn.get().getSunkenShips().size(); // gets sunken ships from the last turn
+            }
 
+            if(this.getShips().size() == 5 && enemy.get().getShips().size() != 5){
+                return "Wait for your opponent";
+            }else if (this.getShips().size() == 5 && enemy.get().getShips().size() == 5){
+                return "You can fire";
+            }
+
+            if (turnViewer < turnEnemy) {
+                return "You can fire";
+            } else if (turnViewer > turnEnemy) {
+                return "You must wait";
+            } else {
+                if (sunksViewer < 5 && sunksEnemy == 5) {
+                    return "You lost";
+                } else if (sunksViewer == 5 && sunksEnemy < 5) {
+                    return "You won";
+                } else if (sunksViewer == 5 && sunksEnemy == 5) {
+                    return "Tie";
+                }
             }
         }
-
-
+    }
 }
