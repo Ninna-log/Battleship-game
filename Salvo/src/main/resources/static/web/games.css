@@ -8,6 +8,9 @@
 body {
     color: rgb(194, 187, 93);
     font-family: 'Lato', sans-serif;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 body::-webkit-scrollbar {

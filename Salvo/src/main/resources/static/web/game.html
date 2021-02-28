@@ -120,11 +120,11 @@
                     </tr>
                     </tbody>
                 </table>
-                <div id="gameStatus">
-                    <h2 v-if="gameView != null && gameView.gameStatus != null">{{gameView.gameStatus}}</h2>
-                </div>
             </div>
         </div>
+    </div>
+    <div class="row mt-4" id="gameStatus">
+        <h2 v-if="gameView != null && gameView.gameStatus != null">{{gameView.gameStatus}}</h2>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>

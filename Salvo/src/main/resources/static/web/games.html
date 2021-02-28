@@ -20,11 +20,11 @@
                              <button type="button" class="btn btn-warning" v-show="authentication == null" v-on:click="register" onclick="this.blur();">SignUp</button>
                         </div>
                     </div>
-                    <div class="row mt-3 mb-4"><h1 v-show="authentication == null">Welcome aboard!</h1></div>
+                    <div class="row mt-3 mb-4"><h1 v-show="authentication == null">Welcome aboard!&#128640;</h1></div>
 
-                    <div class="row pt-3 justify-content-between" v-if="authentication != null" id="userAuthenticated">
+                    <div class="row mt-n3 mb-5 justify-content-between" v-if="authentication != null" id="userAuthenticated">
                          <div class="col-10">
-                             <h2>{{authentication.email}}</h2>
+                             <h2>{{authentication.email}} &#129302;</h2>
                          </div>
                          <div class="col">
                              <button type="button" class="btn btn-warning" v-show="authentication != null" v-on:click="createGame" onclick="this.blur();">Create a Game</button>

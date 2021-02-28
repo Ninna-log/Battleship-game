@@ -7,6 +7,9 @@
 
 body {
     background-image: url("/web/img/fondo3.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
     display: flex;
     align-items: start;
     justify-content: center;
@@ -36,6 +39,12 @@ body::-webkit-scrollbar-thumb {
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
     z-index: -1;
+    min-height: 100%;
+    min-width: 100%;
+    object-fit: cover;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }**/
 
 #table1 {
@@ -80,7 +89,7 @@ h1, h2 {
 }
 
 .hits {
-    background-color: red;
+    background-color: red !important;
 }
 
 #players h1{
@@ -113,9 +122,9 @@ h1, h2 {
 #table .table table tbody tr td,
 #table .table table thead tr th,
 #table .table table thead {
-  border-left: 1px solid #c1c751;
-  border-right: 1px solid #c1c751;
-
+    border-left: 1px solid rgb(51, 50, 50);
+    border-right: 1px solid rgb(51, 50, 50);
+    border-color: rgb(51, 50, 50);
 }
 
 #salvoesTable {
