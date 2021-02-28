@@ -17,12 +17,13 @@
             <button type="button" class="btn btn-warning" @click="logout" onclick="this.blur();">SignOut</button>
         </div>
     </div>
-    <div class="row" id="players">
+
+    <div class="row mt-n5" id="players">
         <h1>{{ viewer != null ? viewer.player.email : '' }} vs. {{ enemy != null ? enemy.player.email : '..'}}</h1>
     </div>
     <div class="row">
-            <div v-show="showShipControls == true" class="col modal-footer">
-                <table class="table">
+            <div class="col-3" v-show="showShipControls == true" id="firstTable">
+                <table class="table" style="border-color: transparent;" id="table1">
                     <thead>
                     <tr>
                         <th scope="col"> Number </th>
@@ -35,7 +36,7 @@
                     <tr>
                         <th>1</th>
                         <td><input type="radio" id="Carrier" value="Carrier" v-model="shipSelected">
-                            <label for="Carrier">Aircraft Carrier</label>
+                            <label for="Carrier">Carrier</label>
                         </td>
                         <th>5</th>
                     </tr>
@@ -63,60 +64,66 @@
                     <tr>
                         <th>1</th>
                         <td><input type="radio" id="PatrolBoat" value="Patroal Boat" v-model="shipSelected">
-                            <label for="PatrolBoat">Patroal Boat</label>
+                            <label for="PatrolBoat">Patroal</label>
                         </td>
                         <th>2</th>
                     </tr>
                     </tbody>
                 </table>
+
                 <div class="row">
-                <input type="radio" id="vertical" value="vertical" v-model="position">
-                <label for="vertical">Vertical</label>
-                </div>
-                <div class="row">
-                <input type="radio" id="horizontal" value="horizontal" v-model="position">
-                <label for="horizontal">Horizontal</label>
+                    <input type="radio" id="horizontal" value="horizontal" v-model="position">
+                    <label for="horizontal">Horizontal</label>
+                    <input type="radio" id="vertical" value="vertical" v-model="position">
+                    <label for="horizontal">Vertical</label>
                     <div class="row">
                         <button type="button" class="btn btn-warning" @click="addingShips(viewer.gpid)" onclick="this.blur();">Add Ship</button>
                     </div>
                 </div>
             </div>
 
-        <div class="table col">
-            <h1>Ships locations</h1>
-            <table border="1">
-                <thead>
-                <tr>
-                    <td></td>
-                    <td v-for="column in columns">{{column}}</td>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="row in rows">
-                    <td>{{row}}</td>
-                    <td @click="newShip(row , column)" v-for="column in columns" v-bind:id="row + column"></td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+        <div class="col">
+            <div class="table" id="shipsTable">
+                <h1>Ships locations</h1>
+                <table border="1">
+                    <thead>
+                    <tr>
+                        <td></td>
+                        <td v-for="column in columns">{{column}}</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="row in rows">
+                        <td>{{row}}</td>
+                        <td @click="newShip(row , column)" v-for="column in columns" v-bind:id="row + column"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-        <div class="table col">
-            <h1>Salvoes locations</h1>
-            <button type="button" class="btn btn-warning" @click="addingSalvoes(viewer.gpid)" onclick="this.blur();">Add Salvoes</button>
-            <table border="1">
-                <thead>
-                <tr>
-                    <td></td>
-                    <td v-for="column in columns">{{column}}</td>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="row in rows">
-                    <td>{{row}}</td>
-                    <td @click="newSalvoes(row , column)" v-for="column in columns" v-bind:id="salvoesViewer + row + column"></td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table" id="salvoesTable">
+                <div id="salvoesTitle">
+                    <h1>Salvoes locations</h1>
+                    <button type="button" class="btn btn-warning" @click="addingSalvoes(viewer.gpid)" onclick="this.blur();">Add Salvoes</button>
+                </div>
+                <table border="1">
+                    <thead>
+                    <tr>
+                        <td></td>
+                        <td v-for="column in columns">{{column}}</td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="row in rows">
+                        <td>{{row}}</td>
+                        <td @click="newSalvoes(row , column)" v-for="column in columns" v-bind:id="salvoesViewer + row + column"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div id="gameStatus">
+                    <h2 v-if="gameView != null && gameView.gameStatus != null">{{gameView.gameStatus}}</h2>
+                </div>
+            </div>
         </div>
     </div>
 </div>

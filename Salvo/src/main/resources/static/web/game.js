@@ -108,6 +108,7 @@ var appVue = new Vue({
                     else {
                         if(appVue.shipsHitsByViewer(appVue.gameView.salvoes[i].location[t])){ // salvo's viewer
                             document.getElementById('s' + appVue.gameView.salvoes[i].location[t]).classList.add('hits');
+                            document.getElementById('s' + appVue.gameView.salvoes[i].location[t]).innerHTML = appVue.gameView.salvoes[i].turn;
                         }else{
                         document.getElementById('s' + appVue.gameView.salvoes[i].location[t]).classList.add('oldViewerSalvo');
                         document.getElementById("s" + appVue.gameView.salvoes[i].location[t]).innerHTML = appVue.gameView.salvoes[i].turn;

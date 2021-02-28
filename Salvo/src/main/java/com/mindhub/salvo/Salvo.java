@@ -102,7 +102,7 @@ public class Salvo {
         }
     }
 
-    public List<Ship> getSunkenShips() {  // enemy
+    public List<Ship> getSunkenShips() {  // list enemy's ships
         Optional<GamePlayer> enemy = this.gamePlayer.getEnemy();
 
         if(enemy.isPresent()){

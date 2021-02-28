@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
 * {
     box-sizing: border-box;
@@ -22,6 +23,11 @@ body::-webkit-scrollbar-thumb {
     background: #37483e;
 }
 
+h1 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 30px;
+}
+
 #userNonAuthenticated {
     padding-left: 1rem;
 }
@@ -43,4 +49,12 @@ input::placeholder {
 .btn-warning a {
     text-decoration: none;
     color: rgb(86, 97, 86);
+}
+
+#games {
+    margin-left: 100px;
+}
+
+#leaderboard table{
+    text-align: center;
 }

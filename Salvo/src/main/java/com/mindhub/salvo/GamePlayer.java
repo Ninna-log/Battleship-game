@@ -110,49 +110,40 @@ public class GamePlayer {
 
     public String gameStateManagement() {
 
-        //A player can't fire a salvo after the game has ended
-        // A tie is possible if both players sink each others ships in the same round.
-        // When the game ends, the controller should update the game score database
-        // 1 point for a win, half a point for a tie, 0 for losing
-
         Optional<GamePlayer> enemy = this.getEnemy();
-        if (this.getShips().isEmpty() && enemy.isPresent()) { // if viewer hasn't placed any ship and enemy exists
-            return "Place Ships";
+        if (this.ships.isEmpty()) { // if viewer hasn't placed any ship and enemy exists
+            return "PLACE SHIPS, MY DUDE";
         } else if (enemy.isEmpty()) { // if enemy doesn't exists yet
-            return "Wait for your enemy";
+            return "WAIT 4 YOUR ENEMY";
         } else {  // salvos porque se quiere recorrer el arreglo de salvos, y getSalvos() porque se quiere obtener el size directamente
             int turnViewer = 0;
-            int sunksViewer = 0;
+            int sunksViewer = 1;    // if none of the previous scenarios fit with the case, then the case is validated in other scenarios
             int turnEnemy = 0;
-            int sunksEnemy = 0;
+            int sunksEnemy = 1;
             Optional<Salvo> gpTurn = this.salvos.stream().filter(salvo -> salvo.getTurn() == this.getSalvos().size()).findFirst(); // last turn played
             Optional<Salvo> enemyTurn = enemy.get().salvos.stream().filter(salvo -> salvo.getTurn() == enemy.get().getSalvos().size()).findFirst();
 
+            // before validate other scenarios, variables must be validated in order to see if they exist
             if (gpTurn.isPresent()) { // vieweeerrr
                 turnViewer = gpTurn.get().getTurn(); // gets last turn played by the viewer
                 sunksViewer = gpTurn.get().getSunkenShips().size(); // gets sunken ships from the last turn
-            } else if (enemyTurn.isPresent()) {
+            } else if (enemyTurn.isPresent()) { // enemy
                 turnEnemy = enemyTurn.get().getTurn(); // gets last turn played by the enemy
                 sunksEnemy = enemyTurn.get().getSunkenShips().size(); // gets sunken ships from the last turn
             }
 
-            if(this.getShips().size() == 5 && enemy.get().getShips().size() != 5){
-                return "Wait for your opponent";
-            }else if (this.getShips().size() == 5 && enemy.get().getShips().size() == 5){
-                return "You can fire";
-            }
-
+            // States of the game
             if (turnViewer < turnEnemy) {
-                return "You can fire";
+                return "FIRE! FIRE!";
             } else if (turnViewer > turnEnemy) {
-                return "You must wait";
+                return "WAIT 4 YOUR ENEMY";
             } else {
                 if (sunksViewer < 5 && sunksEnemy == 5) {
-                    return "You lost";
-                } else if (sunksViewer == 5 && sunksEnemy < 5) {
-                    return "You won";
-                } else if (sunksViewer == 5 && sunksEnemy == 5) {
-                    return "Tie";
+                    return "YOU LOST :(";
+                }else if (sunksEnemy < 5 && sunksViewer == 5) {
+                    return "YAY! YOU WON";
+                }else{
+                    return "IT'S A TIE";
                 }
             }
         }

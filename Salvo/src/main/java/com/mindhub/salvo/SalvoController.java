@@ -8,12 +8,10 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.criteria.CriteriaBuilder;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 @RestController // It's a controller specialization in order to build an API Rest that listens to petitions and send the required petitions
 @RequestMapping("/api") // With the @RequestMapping annotation the URL rest/games is copied or Mapped to the URL /api/games // /api it´s the path where the controller is gonna be found
@@ -222,6 +220,7 @@ public class SalvoController {
             dto.put("enemyHits", new ArrayList<>());
             dto.put("enemySunken", new ArrayList<>());
         }
+        dto.put("gameStatus", gamePlayer.gameStateManagement());
         return dto;
     }
 
