@@ -1,5 +1,6 @@
-package com.mindhub.salvo;
+package com.mindhub.salvo.config;
 
+import com.mindhub.salvo.model.Player;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -7,6 +8,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import com.mindhub.salvo.repositories.PlayerRepository;
 
 @Configuration
 public class WebUserConfig extends GlobalAuthenticationConfigurerAdapter {

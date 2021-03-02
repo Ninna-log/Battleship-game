@@ -1,5 +1,7 @@
-package com.mindhub.salvo;
+package com.mindhub.salvo.controller;
 
+import com.mindhub.salvo.model.*;
+import com.mindhub.salvo.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -7,6 +9,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -134,29 +137,44 @@ public class SalvoController {
             Optional<GamePlayer> gamePlayerOptional = gamePlayerRepository.findById(gamePlayerId);
             if(gamePlayerOptional.isEmpty()) { // there is no game player with the given ID
                 return new ResponseEntity<>(makeMap("error", "Not Found"), HttpStatus.NOT_FOUND);
-            }else{
+            }else {
                 Player player = playerRepository.findByUserName(authentication.getName());
                 // a gamePlayer variable is declared to get rid of the .get()
                 GamePlayer gamePlayer = gamePlayerOptional.get();
                 Optional<GamePlayer> gamePlayerOptional2 = gamePlayer.getGame().getGamePlayers().stream().filter(gamePlayer1 -> gamePlayer1.getId() != gamePlayer.getId()).findFirst();
 
-                if(gamePlayer.getPlayer().getId() != player.getId()){ // the current user isn't the gamePlayer the ID references
-                    return new ResponseEntity<>(makeMap("error", "No Access"), HttpStatus.FORBIDDEN);
-                }else if (salvo.getLocations().size() != 5) {  // salvo has Turn, Player and Location
+                if (gamePlayer.getPlayer().getId() != player.getId()) { // the current user isn't the gamePlayer the ID references
+                    return new ResponseEntity<>(makeMap("error", "You have no access"), HttpStatus.FORBIDDEN);
+                } else if (salvo.getLocations().size() != 5) {  // salvo has Turn, Player and Location
                     return new ResponseEntity<>(makeMap("error", "You should add 5 salvoes"), HttpStatus.FORBIDDEN);
-                }else if (salvo.getTurn()-1 != gamePlayer.getSalvos().size()) {
+                } else if (salvo.getTurn() - 1 != gamePlayer.getSalvos().size()) {
                     // e.g, if turn is = 1 and size is = 1, turn 1 -1 is 0, then 0 != 1 it's true, user hasn´t submitted a salvo in the same turn
                     // otherwise, if turn is 2 and size = 1, turn 2 -1 is 1, then 1 != 1 it's false
                     // it's only true when salvo.getTurn & gameplayer,getSalvos.size have the same numbers
-                    return new ResponseEntity<>(makeMap("error", "It's not your turn"), HttpStatus.FORBIDDEN);
+                    return new ResponseEntity<>(makeMap("error", "It's not a valid turn"), HttpStatus.FORBIDDEN);
                     // A Forbidden response should be sent if the user already has submitted a salvo for the turn listed.
-                }else if(gamePlayerOptional2.isPresent() && salvo.getTurn()-1 > gamePlayerOptional2.get().getSalvos().size()) {
+                } else if (gamePlayerOptional2.isPresent() && salvo.getTurn() - 1 > gamePlayerOptional2.get().getSalvos().size()) {
                     return new ResponseEntity<>(makeMap("error", "Wait for your enemy"), HttpStatus.FORBIDDEN);
-                }else if (gamePlayerOptional2.isEmpty() && salvo.getTurn() == 1){
+                } else if (gamePlayerOptional2.isEmpty() && salvo.getTurn() == 1) {
                     return new ResponseEntity<>(makeMap("error", "Wait for your enemy"), HttpStatus.FORBIDDEN);
-                }else{
+                } else if (gamePlayer.gameStateManagement() != GameStatus.FIRE) {
+                    return new ResponseEntity<>(makeMap("error", "Wait, you can't fire now"), HttpStatus.FORBIDDEN);
+                } else {
                     salvo.setGamePlayer(gamePlayer);
+                    gamePlayer.addSalvo(salvo);
                     salvoRepository.save(salvo);
+
+                if(gamePlayer.gameStateManagement() == GameStatus.WIN){
+                    scoreRepository.save(new Score(gamePlayer.getGame(), gamePlayer.getPlayer(), 1, LocalDateTime.now()));
+                    scoreRepository.save(new Score(gamePlayer.getEnemy().get().getGame(), gamePlayer.getEnemy().get().getPlayer(), 0 , LocalDateTime.now()));
+                }else if (gamePlayer.gameStateManagement() == GameStatus.LOST) {
+                    scoreRepository.save(new Score(gamePlayer.getGame(), gamePlayer.getPlayer(), 0, LocalDateTime.now()));
+                    scoreRepository.save(new Score(gamePlayer.getEnemy().get().getGame(), gamePlayer.getEnemy().get().getPlayer(), 1 , LocalDateTime.now()));
+                }else if (gamePlayer.gameStateManagement() == GameStatus.TIE) {
+                    scoreRepository.save(new Score(gamePlayer.getGame(), gamePlayer.getPlayer(), 0.5, LocalDateTime.now()));
+                    scoreRepository.save(new Score(gamePlayer.getEnemy().get().getGame(), gamePlayer.getEnemy().get().getPlayer(), 0.5, LocalDateTime.now()));
+                }
+
                     return new ResponseEntity<>(makeMap("success", "Salvoes added"), HttpStatus.CREATED);
                     //Otherwise, the ships should be added to the game player and saved, and a Created response should be sent.
                 }

@@ -1,4 +1,4 @@
-package com.mindhub.salvo;
+package com.mindhub.salvo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;

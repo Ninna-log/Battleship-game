@@ -1,4 +1,4 @@
-package com.mindhub.salvo;
+package com.mindhub.salvo.model;
 
 public enum GameStatus {
     PLACE_SHIPS,

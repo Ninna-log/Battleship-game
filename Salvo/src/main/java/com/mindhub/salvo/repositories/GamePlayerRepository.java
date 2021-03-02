@@ -1,6 +1,6 @@
-package com.mindhub.salvo;
+package com.mindhub.salvo.repositories;
 
-import com.mindhub.salvo.GamePlayer;
+import com.mindhub.salvo.model.GamePlayer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
