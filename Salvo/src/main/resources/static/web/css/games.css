@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    color: rgb(194, 187, 93);
+    font-family: 'Lato', sans-serif;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+body::-webkit-scrollbar {
+    width: 0.25rem;
+    height: 0.25rem;
+}
+
+body::-webkit-scrollbar-track {
+    background: rgb(35, 35, 35);
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #37483e;
+}
+
+h1 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 30px;
+}
+
+#userNonAuthenticated {
+    padding-left: 1rem;
+}
+
+#userAuthenticated {
+    padding-left: 2rem;
+}
+
+input::placeholder {
+    color: rgb(86, 97, 86);
+}
+
+.table table {
+    width: 450px;
+    height: 200px;
+    color: rgb(194, 187, 93);
+}
+
+.btn-warning a {
+    text-decoration: none;
+    color: rgb(86, 97, 86);
+}
+
+#games {
+    margin-left: 100px;
+}
+
+#leaderboard table{
+    text-align: center;
+}

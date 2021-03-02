@@ -142,7 +142,7 @@ public class GamePlayer {
                 if (sunksViewer < 5 && sunksEnemy == 5) {
                     return GameStatus.LOST;
                 } else if (sunksViewer == 5 && sunksEnemy < 5) {
-                    return GameStatus.WIN;
+                    return GameStatus.WON;
                 } else if (sunksViewer == 5 && sunksEnemy == 5) {
                     return GameStatus.TIE;
                 }else {

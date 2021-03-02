@@ -1,10 +1,9 @@
 package com.mindhub.salvo;
 
-import com.mindhub.salvo.Ship;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
-public interface ShipRepository extends JpaRepository<Ship, Long> {
+public interface SalvoRepository extends JpaRepository<Salvo, Long> {
 }
-

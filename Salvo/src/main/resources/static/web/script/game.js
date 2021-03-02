@@ -18,7 +18,8 @@ var appVue = new Vue({
         col: null,
         cells: 0,
         rowss: null,
-        cols: null
+        cols: null,
+        gameStatus: "none"
     },
     methods: {
         logout: function () {
@@ -43,7 +44,7 @@ var appVue = new Vue({
             })
                 .done(function (response) {
                     alert("Ships added");
-                    location.reload()
+                    appVue.reloadData();
                 })
                 .fail(function (error) {
                     alert(JSON.parse(error.responseText).error);
@@ -59,11 +60,11 @@ var appVue = new Vue({
             })
                 .done(function (response) {
                     alert('Salvoes added');
-                    location.reload();
+                    appVue.reloadData();
                 })
                 .fail(function (error) {
                     alert(JSON.parse(error.responseText).error);
-                    location.reload();
+                    appVue.reloadData();
                 })
         },
         newSalvoes: function (row, column) {
@@ -257,30 +258,71 @@ var appVue = new Vue({
         },
         shipControls: function () {
             appVue.showShipControls = appVue.gameView != null && appVue.gameView.ships.length != 5;
-        }
+        },
+        wait: function(){
+             if(appVue.gameView.gameStatus == 'WAIT_FOR_ENEMY' || appVue.gameView.gameStatus == 'WAIT'){
+                 setTimeout(appVue.reloadData,2000)
+            }
+        },
+        reloadData: function(){
+             appVue.cleanData();
+             appVue.getData();
+        },
+        cleanData: function(){
+            appVue.salvoes.locations.forEach(loc => document.getElementById("s"+loc).classList.remove("newViewerSalvo"));
+            appVue.salvoes = { "turn": 0, "locations": [] };
+        },
+        getGameStatus: function () {
+            switch (appVue.gameView.gameStatus) {
+                case "PLACE_SHIPS":
+                      appVue.gameStatus = "PLACE SHIPS, MY DUDE";
+                      break;
+                case "WAIT_FOR_ENEMY":
+                      appVue.gameStatus = "WAIT 4 YOUR ENEMY";
+                      break;
+                case "FIRE":
+                      appVue.gameStatus = "FIRE! FIRE!";
+                      break;
+                case "WAIT":
+                      appVue.gameStatus = "WAIT 4 YOUR ENEMY";
+                      break;
+                case "WIN":
+                      appVue.gameStatus = "YAY! YOU WON :D";
+                      break;
+                case "LOST":
+                      appVue.gameStatus = "YOU LOST :(";
+                      break;
+                case "TIE":
+                      appVue.gameStatus = "IT'S A TIE";
+                      break;
+                }
+        },
+        getData: function () {
+            fetch('/api/game_view/' + gp)
+                .then(function (res) {
+                    if (res.ok) {
+                        return res.json();
+                    }
+                    else {
+                        throw new error(res.status)
+                    }
+                })
+                .then(function (json) {
+                    appVue.gameView = json;
+                    appVue.authentication = json.player;
+                    appVue.players();
+                    appVue.drawingShips();
+                    appVue.drawingSalvoes();
+                    appVue.getGameStatus();
+                    appVue.wait();
+                })
+        },
     }
 });
 
 const urlParams = new URLSearchParams(window.location.search);
 const gp = urlParams.get('gp');
 
-fetch('/api/game_view/' + gp)
-    .then(function (res) {
-        if (res.ok) {
-            return res.json();
-        }
-        else {
-            throw new error(res.status)
-        }
-    })
-    .then(function (json) {
-        appVue.gameView = json;
-        appVue.authentication = json.player;
-        appVue.players();
-        appVue.drawingShips();
-        appVue.drawingSalvoes();
-        appVue.shipsHitsByViewer();
-        appVue.shipsHitsByEnemy();
-        appVue.shipControls();
-    })
+appVue.getData();
+
 

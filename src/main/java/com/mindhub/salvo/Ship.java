@@ -1,6 +1,5 @@
 package com.mindhub.salvo;
 
-import com.mindhub.salvo.GamePlayer;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

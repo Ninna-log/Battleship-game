@@ -1,5 +1,6 @@
 package com.mindhub.salvo;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -178,6 +179,10 @@ public class SalvoController {
         return dto;
    }
 
+    private boolean isGuest(Authentication authentication) {
+        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
+    }
+
     @RequestMapping("/game_view/{gamePlayerId}")
     public ResponseEntity<Map<String, Object>> getGameView(@PathVariable Long gamePlayerId, Authentication authentication) {
         Player player = playerRepository.findByUserName(authentication.getName());
@@ -189,6 +194,12 @@ public class SalvoController {
             return new ResponseEntity<>(makeMap("error", "Access denied"), HttpStatus.UNAUTHORIZED);
         }
      }
+
+    private Map<String, Object> makeMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
+    }
 
     private Map<String, Object> toGameViewDTO(GamePlayer gamePlayer) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
@@ -252,15 +263,4 @@ public class SalvoController {
         dto.put("location", salvo.getLocations());
         return dto;
     }
-
-    private Map<String, Object> makeMap(String key, Object value) {
-        Map<String, Object> map = new HashMap<>();
-        map.put(key, value);
-        return map;
-    }
-
-    private boolean isGuest(Authentication authentication) {
-        return authentication == null || authentication instanceof AnonymousAuthenticationToken;
-    }
-
 }

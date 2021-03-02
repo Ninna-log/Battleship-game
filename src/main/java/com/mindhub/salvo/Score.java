@@ -2,7 +2,9 @@ package com.mindhub.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
+import java.util.HashSet;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 public class Score {
@@ -23,7 +25,7 @@ public class Score {
 
     private LocalDateTime finishDate;
 
-    public Score() { }
+    public  Score() { }
 
     public Score(Game game, Player player, double score, LocalDateTime finishDate) {
         this.game = game;
