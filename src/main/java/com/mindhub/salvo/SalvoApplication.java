@@ -1,11 +1,13 @@
 package com.mindhub.salvo;
 
+import com.mindhub.salvo.model.*;
+import com.mindhub.salvo.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.context.annotation.Bean;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
