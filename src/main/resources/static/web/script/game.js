@@ -240,6 +240,26 @@ var appVue = new Vue({
                 }
             }
         },
+        shipsSunkenByViewer: function () {
+            for(var i=0; i < appVue.gameView.sinks.length; i++) {
+                for(var j=0; j < appVue.gameView.sinks[i].sunken.length; j++){
+                    for(var y=0; y < appVue.gameView.sinks[i].sunken[j].shipLocation.length; y++){
+                        document.getElementById('s' + appVue.gameView.sinks[i].sunken[j].shipLocation[y]).classList.remove('hits');
+                        document.getElementById('s' + appVue.gameView.sinks[i].sunken[j].shipLocation[y]).classList.add('sinks');
+                    }
+                }
+            }
+        },
+        shipsSunkenByEnemy: function () {
+            for(var i=0; i < appVue.gameView.enemySunken.length; i++) {
+                for(var j=0; j < appVue.gameView.enemySunken[i].sunken.length; j++){
+                    for(var y=0; y < appVue.gameView.enemySunken[i].sunken[j].shipLocation.length; y++){
+                        document.getElementById(appVue.gameView.enemySunken[i].sunken[j].shipLocation[y]).classList.remove('hits');
+                        document.getElementById(appVue.gameView.enemySunken[i].sunken[j].shipLocation[y]).classList.add('sinks');
+                    }
+                }
+            }
+        },
         drawingShips: function () {
             for (var i = 0; i < appVue.gameView.ships.length; i++) {
                 for (var x = 0; x < appVue.gameView.ships[i].location.length; x++) {
@@ -312,6 +332,8 @@ var appVue = new Vue({
                     appVue.authentication = json.player;
                     appVue.players();
                     appVue.drawingShips();
+                    appVue.shipsSunkenByViewer();
+                    appVue.shipsSunkenByEnemy();
                     appVue.drawingSalvoes();
                     appVue.getGameStatus();
                     appVue.wait();

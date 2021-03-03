@@ -109,6 +109,10 @@ h2 {
     font-family: 'Lato', sans-serif;
 }
 
+.sinks {
+    background-color: rgb(38, 41, 41) !important;
+}
+
 #players h1{
     font-family: 'Press Start 2P', cursive;
     display: flex;
