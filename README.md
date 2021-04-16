@@ -33,8 +33,8 @@ I created a front-end web application that game players interact with, and a bac
 - Download and install H2
 - Download and install Gradle 7.0
 - Run on console, from the root: 
-  gradle wrap
-  gradle bootrun
+  1.gradle wrapper
+  2. gradle bootRun
 
 If everything was successfully installed and compiled you'll be able to access the project from:
 
