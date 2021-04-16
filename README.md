@@ -38,11 +38,11 @@ I created a front-end web application that game players interact with, and a bac
 
 If everything was successfully installed and compiled you'll be able to access the project from:
 
-🌐 http://localhost:8080/web/games.html
+🌐 <a>http://localhost:8080/web/games.html</a>
 
 Or you can also access to the project on Heroku:
 
-🌐 https://ninna-battleship.herokuapp.com/web/games.html
+🌐 <a>https://ninna-battleship.herokuapp.com/web/games.html</a>
 
 
 👀<strong>Interfaces Salvo Battleship<strong>
